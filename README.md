@@ -34,7 +34,7 @@ Built with **HTML, CSS, and JavaScript**, with local storage support for caching
 
 You can try the project by opening the `index.html` file in your browser.  
 
-![Demo Screenshot](screenshot.png)  
+![Demo Screenshot](screenshot.jpg)  
 *Replace the image with an actual screenshot of your app.*
 
 ---
