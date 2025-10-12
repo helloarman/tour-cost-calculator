@@ -425,6 +425,60 @@
             background-color: #f5f5f5; /* Light Grey */
             color: var(--text-color-secondary);
         }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 768px) {
+            body {
+                padding: var(--spacing-medium);
+                padding-bottom: 120px; /* Keep space for nav */
+            }
+
+            .main-header h1 {
+                font-size: 20px; /* Slightly smaller headline */
+            }
+
+            .actions-toolbar {
+                flex-direction: column;
+                align-items: stretch; /* Make children full-width */
+                max-width: 100%;
+                padding: 0 var(--spacing-medium);
+            }
+            
+            .add-member-form {
+                width: 100%;
+            }
+
+            .summary-section {
+                flex-direction: column;
+                padding: 0 var(--spacing-medium);
+            }
+            .summary-card {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                /* Slightly smaller fonts for very small screens */
+                --headline-size: 20px;
+                --subheadline-size: 16px;
+                --body-size: 13px;
+                --caption-size: 11px;
+            }
+            
+            .add-member-form {
+                flex-direction: column;
+            }
+
+            .cta-button {
+                padding: 12px 20px;
+                font-size: var(--body-size);
+            }
+
+            .modal-content {
+                padding: var(--spacing-medium);
+            }
+        }
     </style>
 </head>
 <body>
