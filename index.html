@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tour Contribution Calculator</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Design System Variables --- */
+        :root {
+            /* Theme */
+            --primary-color: #FFD633;
+            --secondary-color: #111111;
+            --background-color: #F5F6FA;
+            --card-background: #FFFFFF;
+            --accent-color: #FFB400;
+            --text-color-primary: #111111;
+            --text-color-secondary: #555555;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --border-color: #E5E5E5;
+            --error-color: #e74c3c;
+            --success-color: #2e7d32;
+
+            /* Typography */
+            --font-family: 'Poppins', sans-serif;
+            --headline-size: 22px;
+            --subheadline-size: 18px;
+            --body-size: 14px;
+            --caption-size: 12px;
+            --font-weight-light: 300;
+            --font-weight-regular: 400;
+            --font-weight-medium: 500;
+            --font-weight-bold: 600;
+            --line-height: 1.5;
+
+            /* Layout */
+            --border-radius-card: 24px;
+            --border-radius-button: 18px;
+            --border-radius-input: 14px;
+            --spacing-small: 8px;
+            --spacing-medium: 16px;
+            --spacing-large: 24px;
+            --max-card-width: 360px;
+            --shadow-small: 0px 4px 10px var(--shadow-color);
+            --shadow-medium: 0px 8px 20px rgba(0,0,0,0.15);
+
+            /* Animation */
+            --transition-speed: 0.3s;
+        }
+
+        /* --- Global Styles & Resets --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color-primary);
+            font-size: var(--body-size);
+            padding: var(--spacing-large);
+            padding-bottom: 120px; /* Space for fixed navbar */
+        }
+
+        /* --- Main Layout --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: var(--spacing-large);
+        }
+
+        .main-header {
+            text-align: center;
+            margin-bottom: var(--spacing-medium);
+        }
+
+        .main-header h1 {
+            font-size: var(--headline-size);
+            font-weight: var(--font-weight-bold);
+            color: var(--secondary-color);
+        }
+         .main-header p {
+            color: var(--text-color-secondary);
+            font-size: var(--body-size);
+        }
+        
+        .actions-toolbar {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-small);
+            margin: 0 auto var(--spacing-large) auto;
+        }
+
+
+        /* --- Component: Input & Forms --- */
+        .add-member-form {
+            display: flex;
+            gap: var(--spacing-small);
+            flex-grow: 1;
+            max-width: var(--max-card-width);
+        }
+
+        .input-field, .select-field {
+            flex-grow: 1;
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-input);
+            padding: 12px 16px;
+            font-family: var(--font-family);
+            font-size: var(--body-size);
+            font-weight: var(--font-weight-medium);
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        .input-field::placeholder {
+            color: #AAAAAA;
+            font-weight: var(--font-weight-regular);
+        }
+        .input-field:focus, .select-field:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 214, 51, 0.3);
+        }
+        
+        /* --- Component: Buttons --- */
+        .cta-button {
+            background: var(--primary-color);
+            color: var(--text-color-primary);
+            border-radius: var(--border-radius-button);
+            font-weight: var(--font-weight-bold);
+            padding: 12px 24px;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-family);
+            font-size: var(--body-size);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-small);
+            transition: transform var(--transition-speed), opacity var(--transition-speed);
+        }
+        .cta-button:hover {
+            transform: scale(1.03);
+        }
+        .cta-button:active {
+            opacity: 0.85;
+            transform: scale(0.98);
+        }
+        .button-sm {
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: var(--caption-size);
+        }
+        .icon-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 0;
+            color: var(--text-color-secondary);
+            transition: color var(--transition-speed);
+        }
+        .icon-button:hover {
+            color: var(--error-color);
+        }
+        .icon-button svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        /* --- Component: Summary Cards --- */
+        .summary-section {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-medium);
+            flex-wrap: wrap;
+        }
+        .summary-card {
+            background: var(--card-background);
+            border-radius: var(--border-radius-card);
+            padding: var(--spacing-medium) var(--spacing-large);
+            box-shadow: var(--shadow-small);
+            text-align: center;
+            flex-grow: 1;
+            max-width: var(--max-card-width);
+        }
+        .summary-card-title {
+            font-size: var(--body-size);
+            color: var(--text-color-secondary);
+            margin-bottom: var(--spacing-small);
+        }
+        .summary-card-value {
+            font-size: var(--subheadline-size);
+            font-weight: var(--font-weight-bold);
+            color: var(--secondary-color);
+        }
+        .summary-card-value span {
+            font-weight: var(--font-weight-regular);
+            font-size: var(--body-size);
+        }
+
+        /* --- Component: Member Cards --- */
+        .members-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-large);
+            justify-content: center;
+        }
+        .member-card {
+            background: var(--card-background);
+            border-radius: var(--border-radius-card);
+            padding: var(--spacing-medium);
+            box-shadow: var(--shadow-small);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-medium);
+            max-width: var(--max-card-width);
+            margin: 0 auto;
+            width: 100%;
+        }
+        .member-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: var(--spacing-medium);
+        }
+        .member-card-title {
+            font-size: 16px;
+            font-weight: var(--font-weight-bold);
+        }
+        .contributions-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-small);
+            min-height: 50px;
+        }
+        .contribution-item, .transfer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: var(--body-size);
+            background: #fafafa;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        .transfer-item .contribution-title {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .transfer-item.transfer-in .contribution-amount { color: var(--success-color); }
+        .transfer-item.transfer-out .contribution-amount { color: var(--error-color); }
+        .contribution-title {
+            color: var(--text-color-secondary);
+        }
+        .contribution-amount {
+            font-weight: var(--font-weight-medium);
+            color: var(--text-color-primary);
+        }
+        .empty-contributions {
+            text-align: center;
+            color: var(--text-color-secondary);
+            font-size: var(--caption-size);
+            padding: var(--spacing-medium);
+        }
+
+        /* --- Component: Navbar (Bottom) --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: var(--spacing-large);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-background);
+            border-radius: 30px;
+            padding: var(--spacing-small);
+            box-shadow: var(--shadow-medium);
+            z-index: 100;
+        }
+        
+        /* --- Component: Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-speed), visibility var(--transition-speed);
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: var(--card-background);
+            border-radius: var(--border-radius-card);
+            padding: var(--spacing-large);
+            box-shadow: var(--shadow-medium);
+            width: 90%;
+            max-width: 400px;
+            transform: scale(0.9);
+            transition: transform var(--transition-speed);
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-medium);
+        }
+        .modal-title {
+            font-size: var(--subheadline-size);
+            font-weight: var(--font-weight-bold);
+        }
+        #contribution-form, #transfer-form {
+            display: grid;
+            gap: var(--spacing-medium);
+        }
+        .form-group {
+            display: grid;
+            gap: var(--spacing-small);
+        }
+        .form-group label {
+            font-weight: var(--font-weight-medium);
+        }
+        .modal-actions {
+            display: flex;
+            gap: var(--spacing-small);
+            justify-content: flex-end;
+            margin-top: var(--spacing-medium);
+        }
+        .button-secondary {
+            background-color: #eee;
+            color: var(--secondary-color);
+        }
+        .button-danger {
+            background-color: var(--error-color);
+            color: white;
+        }
+        .member-card-summary {
+            border-top: 1px solid var(--border-color);
+            padding-top: var(--spacing-medium);
+            margin-top: var(--spacing-small);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .member-total-label {
+            font-size: var(--caption-size);
+            color: var(--text-color-secondary);
+        }
+        .member-total-amount {
+            font-size: var(--body-size);
+            font-weight: var(--font-weight-bold);
+        }
+        .balance-info {
+            font-weight: var(--font-weight-bold);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: var(--caption-size);
+            text-align: right;
+        }
+        .positive-balance {
+            background-color: #e8f5e9; /* Light Green */
+            color: #2e7d32; /* Dark Green */
+        }
+        .negative-balance {
+            background-color: #ffebee; /* Light Red */
+            color: var(--error-color);
+        }
+        .settled-balance {
+            background-color: #f5f5f5; /* Light Grey */
+            color: var(--text-color-secondary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="main-header">
+            <h1>Tour Contribution Calculator</h1>
+            <p>Manage shared trip costs with ease.</p>
+        </header>
+
+        <div class="actions-toolbar">
+            <!-- Add New Member Form -->
+            <form id="add-member-form" class="add-member-form">
+                <input type="text" id="member-name-input" class="input-field" placeholder="Enter member's name" required>
+                <button type="submit" class="cta-button">Add</button>
+            </form>
+            <button id="transfer-button" class="cta-button button-secondary">Transfer</button>
+        </div>
+
+
+        <!-- Summary Section -->
+        <section id="summary-section" class="summary-section">
+            <div class="summary-card">
+                <div class="summary-card-title">Total Contribution</div>
+                <div class="summary-card-value" id="total-contribution">৳0.00</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-title">Equal Share</div>
+                <div class="summary-card-value" id="equal-share">৳0.00 <span>per person</span></div>
+            </div>
+        </section>
+        
+        <!-- Members Section -->
+        <main id="members-section" class="members-section"></main>
+
+    </div>
+
+    <!-- Bottom Navbar for Reset -->
+    <nav class="bottom-nav">
+        <button id="reset-button" class="cta-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L20.49 10M3.51 14l-2.02 4.64A9 9 0 0 0 18.5 22.49"></path></svg>
+            <span>Reset Journey</span>
+        </button>
+    </nav>
+
+    <!-- Contribution Modal -->
+    <div id="contribution-modal" class="modal-overlay">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 class="modal-title" id="modal-title">Add Contribution</h2>
+                <button class="icon-button close-modal-btn">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </header>
+            <form id="contribution-form">
+                <input type="hidden" id="contribution-member-id">
+                <div class="form-group">
+                    <label for="contribution-title">Title</label>
+                    <input type="text" id="contribution-title" class="input-field" placeholder="e.g., Fuel, Groceries" required>
+                </div>
+                <div class="form-group">
+                    <label for="contribution-amount">Amount (৳)</label>
+                    <input type="number" id="contribution-amount" class="input-field" placeholder="0.00" step="0.01" min="0" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cta-button button-secondary cancel-modal-btn">Cancel</button>
+                    <button type="submit" class="cta-button">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Transfer Modal -->
+    <div id="transfer-modal" class="modal-overlay">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 class="modal-title">Transfer Money</h2>
+                <button class="icon-button close-modal-btn">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </header>
+            <form id="transfer-form">
+                <div class="form-group">
+                    <label for="transfer-from">From</label>
+                    <select id="transfer-from" class="select-field" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="transfer-to">To</label>
+                    <select id="transfer-to" class="select-field" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="transfer-amount">Amount (৳)</label>
+                    <input type="number" id="transfer-amount" class="input-field" placeholder="0.00" step="0.01" min="0" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cta-button button-secondary cancel-modal-btn">Cancel</button>
+                    <button type="submit" class="cta-button">Confirm Transfer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 class="modal-title" id="confirm-modal-title">Are you sure?</h2>
+            </header>
+            <p id="confirm-modal-text" style="margin: var(--spacing-medium) 0; color: var(--text-color-secondary);"></p>
+            <div class="modal-actions">
+                <button type="button" id="confirm-cancel-btn" class="cta-button button-secondary">Cancel</button>
+                <button type="button" id="confirm-ok-btn" class="cta-button button-danger">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const addMemberForm = document.getElementById('add-member-form');
+            const memberNameInput = document.getElementById('member-name-input');
+            const membersSection = document.getElementById('members-section');
+            const totalContributionEl = document.getElementById('total-contribution');
+            const equalShareEl = document.getElementById('equal-share');
+            const resetButton = document.getElementById('reset-button');
+            const transferButton = document.getElementById('transfer-button');
+            
+            // Contribution Modal Elements
+            const contributionModal = document.getElementById('contribution-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const contributionForm = document.getElementById('contribution-form');
+            const contributionMemberIdInput = document.getElementById('contribution-member-id');
+            const contributionTitleInput = document.getElementById('contribution-title');
+            const contributionAmountInput = document.getElementById('contribution-amount');
+
+            // Transfer Modal Elements
+            const transferModal = document.getElementById('transfer-modal');
+            const transferForm = document.getElementById('transfer-form');
+            const transferFromSelect = document.getElementById('transfer-from');
+            const transferToSelect = document.getElementById('transfer-to');
+            const transferAmountInput = document.getElementById('transfer-amount');
+
+            // Generic Modal Elements
+            const allModals = document.querySelectorAll('.modal-overlay');
+            const closeButtons = document.querySelectorAll('.close-modal-btn');
+            const cancelButtons = document.querySelectorAll('.cancel-modal-btn');
+
+            // Confirm Modal Elements
+            const confirmModal = document.getElementById('confirm-modal');
+            const confirmModalText = document.getElementById('confirm-modal-text');
+            const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+            const confirmOkBtn = document.getElementById('confirm-ok-btn');
+
+            // --- State Management ---
+            let members = [];
+            let contributions = [];
+            let transfers = [];
+            let confirmCallback = null;
+
+            const storageKeys = {
+                members: 'tour_members',
+                contributions: 'tour_contributions',
+                transfers: 'tour_transfers'
+            };
+
+            // --- Functions ---
+            const setCookie = (name, value, days) => {
+                let expires = "";
+                if (days) {
+                    const date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = "; expires=" + date.toUTCString();
+                }
+                document.cookie = name + "=" + (encodeURIComponent(value) || "")  + expires + "; path=/; SameSite=Lax";
+            };
+
+            const getCookie = (name) => {
+                const nameEQ = name + "=";
+                const ca = document.cookie.split(';');
+                for(let i=0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0) {
+                        return decodeURIComponent(c.substring(nameEQ.length, c.length));
+                    }
+                }
+                return null;
+            };
+
+            const saveState = () => {
+                setCookie(storageKeys.members, JSON.stringify(members), 365);
+                setCookie(storageKeys.contributions, JSON.stringify(contributions), 365);
+                setCookie(storageKeys.transfers, JSON.stringify(transfers), 365);
+            };
+
+            const loadState = () => {
+                const membersCookie = getCookie(storageKeys.members);
+                const contributionsCookie = getCookie(storageKeys.contributions);
+                const transfersCookie = getCookie(storageKeys.transfers);
+                try {
+                    members = membersCookie ? JSON.parse(membersCookie) : [];
+                    contributions = contributionsCookie ? JSON.parse(contributionsCookie) : [];
+                    transfers = transfersCookie ? JSON.parse(transfersCookie) : [];
+                } catch (e) {
+                    console.error("Error parsing cookies, resetting state.", e);
+                    members = [];
+                    contributions = [];
+                    transfers = [];
+                }
+            };
+            
+            const formatCurrency = (amount, addSign = false) => {
+                const formatted = `৳${Math.abs(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                if (addSign) {
+                    return (amount >= 0 ? '+' : '-') + formatted;
+                }
+                return formatted;
+            };
+
+            const render = () => {
+                // Calculate totals first
+                const totalContribution = contributions.reduce((sum, c) => sum + c.amount, 0);
+                const equalShare = members.length > 0 ? totalContribution / members.length : 0;
+
+                // Render Members
+                membersSection.innerHTML = '';
+                if (members.length === 0) {
+                     membersSection.innerHTML = '<p style="text-align: center; color: var(--text-color-secondary); grid-column: 1 / -1;">No members yet. Add one to get started!</p>';
+                } else {
+                    members.forEach(member => {
+                        const memberContributions = contributions.filter(c => c.memberId === member.id);
+                        const memberTotalContributions = memberContributions.reduce((sum, c) => sum + c.amount, 0);
+                        
+                        const transfersSent = transfers.filter(t => t.fromId === member.id);
+                        const totalSent = transfersSent.reduce((sum, t) => sum + t.amount, 0);
+
+                        const transfersReceived = transfers.filter(t => t.toId === member.id);
+                        const totalReceived = transfersReceived.reduce((sum, t) => sum + t.amount, 0);
+
+                        const effectiveTotalPaid = memberTotalContributions + totalSent - totalReceived;
+                        const balance = effectiveTotalPaid - equalShare;
+
+                        const memberCard = document.createElement('div');
+                        memberCard.className = 'member-card';
+                        memberCard.dataset.memberId = member.id;
+                        
+                        // Combine contributions and transfers for a unified activity log
+                        const activityLog = [
+                            ...memberContributions.map(c => ({ ...c, type: 'contribution', date: c.id })),
+                            ...transfersSent.map(t => ({ ...t, type: 'transfer-out', date: t.id })),
+                            ...transfersReceived.map(t => ({ ...t, type: 'transfer-in', date: t.id }))
+                        ].sort((a, b) => a.date - b.date);
+
+                        let activityHtml = '';
+                        if (activityLog.length > 0) {
+                            activityHtml = activityLog.map(item => {
+                                if (item.type === 'contribution') {
+                                    return `
+                                    <li class="contribution-item" data-contribution-id="${item.id}">
+                                        <span class="contribution-title">${item.title}</span>
+                                        <div>
+                                            <span class="contribution-amount">${formatCurrency(item.amount)}</span>
+                                            <button class="icon-button remove-contribution-btn">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                            </button>
+                                        </div>
+                                    </li>`;
+                                } else if (item.type === 'transfer-out') {
+                                    const toMember = members.find(m => m.id === item.toId);
+                                    return `
+                                    <li class="transfer-item transfer-out">
+                                        <span class="contribution-title">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                            To ${toMember ? toMember.name : 'Unknown'}
+                                        </span>
+                                        <span class="contribution-amount">${formatCurrency(item.amount, true)}</span>
+                                    </li>`;
+                                } else { // transfer-in
+                                    const fromMember = members.find(m => m.id === item.fromId);
+                                    return `
+                                    <li class="transfer-item transfer-in">
+                                        <span class="contribution-title">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                                            From ${fromMember ? fromMember.name : 'Unknown'}
+                                        </span>
+                                        <span class="contribution-amount">${formatCurrency(item.amount, true)}</span>
+                                    </li>`;
+                                }
+                            }).join('');
+                        } else {
+                            activityHtml = '<li class="empty-contributions">No activity yet.</li>';
+                        }
+                        
+                        let balanceHtml = '';
+                        if (members.length > 1 && totalContribution > 0) {
+                            if (Math.abs(balance) < 0.01) {
+                                balanceHtml = `<div class="balance-info settled-balance">Settled Up</div>`;
+                            } else if (balance > 0) {
+                                balanceHtml = `<div class="balance-info positive-balance">Gets back ${formatCurrency(balance)}</div>`;
+                            } else {
+                                balanceHtml = `<div class="balance-info negative-balance">Owes ${formatCurrency(Math.abs(balance))}</div>`;
+                            }
+                        }
+
+                        memberCard.innerHTML = `
+                            <div class="member-card-header">
+                                <h2 class="member-card-title">${member.name}</h2>
+                                <button class="icon-button remove-member-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                </button>
+                            </div>
+                            <ul class="contributions-list">
+                                ${activityHtml}
+                            </ul>
+                            <div class="member-card-summary">
+                                <div>
+                                    <div class="member-total-label">Effective Paid</div>
+                                    <div class="member-total-amount">${formatCurrency(effectiveTotalPaid)}</div>
+                                </div>
+                                ${balanceHtml}
+                            </div>
+                            <button class="cta-button button-sm add-contribution-btn">Add Contribution</button>
+                        `;
+                        membersSection.appendChild(memberCard);
+                    });
+                }
+
+                // Render Summary
+                totalContributionEl.textContent = formatCurrency(totalContribution);
+                equalShareEl.innerHTML = `${formatCurrency(equalShare)} <span>per person</span>`;
+            };
+            
+            const addMember = (e) => {
+                e.preventDefault();
+                const name = memberNameInput.value.trim();
+                if (name) {
+                    const newMember = {
+                        id: Date.now(),
+                        name: name
+                    };
+                    members.push(newMember);
+                    memberNameInput.value = '';
+                    saveAndRender();
+                }
+            };
+            
+            const handleMemberSectionClick = (e) => {
+                const memberCard = e.target.closest('.member-card');
+                if (!memberCard) return;
+                
+                const memberId = parseInt(memberCard.dataset.memberId);
+
+                // Remove Member
+                if (e.target.closest('.remove-member-btn')) {
+                    showConfirmModal(
+                        `Are you sure you want to remove this member and all related data?`,
+                        () => {
+                            members = members.filter(m => m.id !== memberId);
+                            contributions = contributions.filter(c => c.memberId !== memberId);
+                            transfers = transfers.filter(t => t.fromId !== memberId && t.toId !== memberId);
+                            saveAndRender();
+                        }
+                    );
+                }
+
+                // Add Contribution (Open Modal)
+                if (e.target.closest('.add-contribution-btn')) {
+                    openContributionModal(memberId);
+                }
+
+                // Remove Contribution
+                if (e.target.closest('.remove-contribution-btn')) {
+                    const contributionItem = e.target.closest('.contribution-item');
+                    const contributionId = parseInt(contributionItem.dataset.contributionId);
+                    contributions = contributions.filter(c => c.id !== contributionId);
+                    saveAndRender();
+                }
+            };
+
+            const openContributionModal = (memberId) => {
+                const member = members.find(m => m.id === memberId);
+                if (member) {
+                    modalTitle.textContent = `Add for ${member.name}`;
+                    contributionMemberIdInput.value = memberId;
+                    contributionForm.reset();
+                    contributionModal.classList.add('active');
+                    contributionTitleInput.focus();
+                }
+            };
+
+            const addContribution = (e) => {
+                e.preventDefault();
+                const memberId = parseInt(contributionMemberIdInput.value);
+                const title = contributionTitleInput.value.trim();
+                const amount = parseFloat(contributionAmountInput.value);
+
+                if (memberId && title && amount >= 0) {
+                    const newContribution = {
+                        id: Date.now(),
+                        memberId: memberId,
+                        title: title,
+                        amount: amount
+                    };
+                    contributions.push(newContribution);
+                    closeAllModals();
+                    saveAndRender();
+                }
+            };
+            
+            const openTransferModal = () => {
+                if (members.length < 2) {
+                    alert("You need at least two members to make a transfer.");
+                    return;
+                }
+                transferFromSelect.innerHTML = members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+                transferToSelect.innerHTML = members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+                transferForm.reset();
+                transferModal.classList.add('active');
+            };
+
+            const addTransfer = (e) => {
+                e.preventDefault();
+                const fromId = parseInt(transferFromSelect.value);
+                const toId = parseInt(transferToSelect.value);
+                const amount = parseFloat(transferAmountInput.value);
+
+                if (fromId === toId) {
+                    alert("Cannot transfer money to the same person.");
+                    return;
+                }
+
+                if (fromId && toId && amount > 0) {
+                    const newTransfer = {
+                        id: Date.now(),
+                        fromId,
+                        toId,
+                        amount
+                    };
+                    transfers.push(newTransfer);
+                    closeAllModals();
+                    saveAndRender();
+                }
+            };
+
+            const closeAllModals = () => {
+                allModals.forEach(modal => modal.classList.remove('active'));
+            };
+            
+            const resetApp = () => {
+                showConfirmModal(
+                    'Are you sure? This will delete all members, contributions, and transfers.',
+                    () => {
+                        members = [];
+                        contributions = [];
+                        transfers = [];
+                        saveAndRender();
+                    }
+                );
+            };
+
+            const saveAndRender = () => {
+                saveState();
+                render();
+            };
+
+            // Confirmation Modal Logic
+            const showConfirmModal = (message, callback) => {
+                confirmModalText.textContent = message;
+                confirmCallback = callback;
+                confirmModal.classList.add('active');
+            };
+
+            const hideConfirmModal = () => {
+                confirmModal.classList.remove('active');
+                confirmCallback = null;
+            };
+
+            // --- Event Listeners ---
+            addMemberForm.addEventListener('submit', addMember);
+            resetButton.addEventListener('click', resetApp);
+            transferButton.addEventListener('click', openTransferModal);
+            membersSection.addEventListener('click', handleMemberSectionClick);
+            
+            // Modal Listeners
+            closeButtons.forEach(btn => btn.addEventListener('click', closeAllModals));
+            cancelButtons.forEach(btn => btn.addEventListener('click', closeAllModals));
+            allModals.forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closeAllModals();
+                    }
+                });
+            });
+            contributionForm.addEventListener('submit', addContribution);
+            transferForm.addEventListener('submit', addTransfer);
+
+            // Confirm Modal Listeners
+            confirmCancelBtn.addEventListener('click', hideConfirmModal);
+            confirmOkBtn.addEventListener('click', () => {
+                if (typeof confirmCallback === 'function') {
+                    confirmCallback();
+                }
+                hideConfirmModal();
+            });
+            confirmModal.addEventListener('click', (e) => {
+                if (e.target === confirmModal) {
+                    hideConfirmModal();
+                }
+            });
+
+            // --- Initial Load ---
+            loadState();
+            render();
+        });
+    </script>
+</body>
+</html>
+
