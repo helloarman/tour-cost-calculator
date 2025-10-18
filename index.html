@@ -7,7 +7,7 @@
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#FFD633"/>
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIGZpbGw9IiNGRkQ2MzMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlBvcHBpbnMsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iODAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMTExMTExIj5UQ0M8L3RleHQ+PC9zdmc+">
+    <link rel="apple-touch-icon" href="./icon-192.png">
     <script>
         // Create manifest file dynamically and link it
         const manifest = {
@@ -20,13 +20,13 @@
           "theme_color": "#FFD633",
           "icons": [
             {
-              "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIGZpbGw9IiNGRkQ2MzMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlBvcHBpbnMsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iODAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMTExMTExIj5UQ0M8L3RleHQ+PC9zdmc+",
+              "src": "./icon-192.png",
               "sizes": "192x192",
               "type": "image/svg+xml",
               "purpose": "any maskable"
             },
             {
-              "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIGZpbGw9IiNGRkQ2MzMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlBvcHBpbnMsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iIzExMTExMSI+VENDPC90ZXh0Pjwvc3ZnPg==",
+              "src": "./icon-512.png",
               "sizes": "512x512",
               "type": "image/svg+xml",
               "purpose": "any maskable"
@@ -320,6 +320,12 @@
             padding: var(--spacing-small);
             box-shadow: var(--shadow-medium);
             z-index: 100;
+            display: flex;
+            gap: var(--spacing-medium);
+        }
+        .nav-button-group {
+            display: flex;
+            gap: var(--spacing-small);
         }
         
         /* --- Component: Modal --- */
@@ -369,6 +375,25 @@
             display: grid;
             gap: var(--spacing-medium);
         }
+        #settings-modal .modal-content {
+             display: grid;
+            gap: var(--spacing-large);
+        }
+        .settings-section {
+            border-top: 1px solid var(--border-color);
+            padding-top: var(--spacing-large);
+        }
+        .settings-section h3 {
+             font-size: var(--body-size);
+             font-weight: var(--font-weight-bold);
+             margin-bottom: var(--spacing-medium);
+        }
+        .settings-actions {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-medium);
+        }
+
         .form-group {
             display: grid;
             gap: var(--spacing-small);
@@ -456,6 +481,12 @@
                 max-width: 100%;
             }
         }
+        @media (max-width: 540px) {
+            .bottom-nav {
+                flex-direction: column;
+                gap: var(--spacing-small);
+            }
+        }
 
         @media (max-width: 480px) {
             :root {
@@ -478,6 +509,7 @@
             .modal-content {
                 padding: var(--spacing-medium);
             }
+
         }
     </style>
 </head>
@@ -485,7 +517,7 @@
 
     <div class="container">
         <header class="main-header">
-            <h1>Tour Contribution Calculator</h1>
+            <h1 id="tour-title-header">Tour Contribution Calculator</h1>
             <p>Manage shared trip costs with ease.</p>
         </header>
 
@@ -516,13 +548,55 @@
 
     </div>
 
-    <!-- Bottom Navbar for Reset -->
+    <!-- Bottom Navbar -->
     <nav class="bottom-nav">
-        <button id="reset-button" class="cta-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L20.49 10M3.51 14l-2.02 4.64A9 9 0 0 0 18.5 22.49"></path></svg>
-            <span>Reset Journey</span>
-        </button>
+        <div class="nav-button-group">
+            <button id="download-report-button" class="cta-button button-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Report</span>
+            </button>
+             <button id="copy-report-button" class="cta-button button-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>Copy</span>
+            </button>
+            <button id="settings-button" class="cta-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span>Settings</span>
+            </button>
+        </div>
     </nav>
+    
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 class="modal-title">Settings & Data</h2>
+                <button class="icon-button close-modal-btn">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </header>
+            
+            <div class="form-group">
+                <label for="tour-name-input">Tour Name</label>
+                <input type="text" id="tour-name-input" class="input-field" placeholder="e.g., Summer Road Trip">
+            </div>
+
+            <div class="settings-section">
+                <h3>Data Management</h3>
+                <div class="settings-actions">
+                    <button id="backup-button" class="cta-button button-secondary">Backup Data</button>
+                    <label for="upload-input" class="cta-button button-secondary">Restore Data</label>
+                    <input type="file" id="upload-input" accept=".json" style="display: none;">
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>All of your adjustments adjusted?</h3>
+                 <button id="reset-button" class="cta-button button-danger" style="width: 100%;">Reset Journey</button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Contribution Modal -->
     <div id="contribution-modal" class="modal-overlay">
@@ -599,14 +673,24 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- DOM Elements ---
+            const tourTitleHeader = document.getElementById('tour-title-header');
             const addMemberForm = document.getElementById('add-member-form');
             const memberNameInput = document.getElementById('member-name-input');
             const membersSection = document.getElementById('members-section');
             const totalContributionEl = document.getElementById('total-contribution');
             const equalShareEl = document.getElementById('equal-share');
-            const resetButton = document.getElementById('reset-button');
             const transferButton = document.getElementById('transfer-button');
+            const downloadReportButton = document.getElementById('download-report-button');
+            const copyReportButton = document.getElementById('copy-report-button');
+            const settingsButton = document.getElementById('settings-button');
             
+            // Settings Modal Elements
+            const settingsModal = document.getElementById('settings-modal');
+            const tourNameInput = document.getElementById('tour-name-input');
+            const backupButton = document.getElementById('backup-button');
+            const uploadInput = document.getElementById('upload-input');
+            const resetButton = document.getElementById('reset-button');
+
             // Contribution Modal Elements
             const contributionModal = document.getElementById('contribution-modal');
             const modalTitle = document.getElementById('modal-title');
@@ -637,12 +721,14 @@
             let members = [];
             let contributions = [];
             let transfers = [];
+            let tourName = 'Tour Contribution Calculator';
             let confirmCallback = null;
 
             const storageKeys = {
                 members: 'tour_members',
                 contributions: 'tour_contributions',
-                transfers: 'tour_transfers'
+                transfers: 'tour_transfers',
+                tourName: 'tour_name'
             };
 
             // --- Functions ---
@@ -673,21 +759,26 @@
                 setCookie(storageKeys.members, JSON.stringify(members), 365);
                 setCookie(storageKeys.contributions, JSON.stringify(contributions), 365);
                 setCookie(storageKeys.transfers, JSON.stringify(transfers), 365);
+                setCookie(storageKeys.tourName, tourName, 365);
             };
 
             const loadState = () => {
                 const membersCookie = getCookie(storageKeys.members);
                 const contributionsCookie = getCookie(storageKeys.contributions);
                 const transfersCookie = getCookie(storageKeys.transfers);
+                const tourNameCookie = getCookie(storageKeys.tourName);
+
                 try {
                     members = membersCookie ? JSON.parse(membersCookie) : [];
                     contributions = contributionsCookie ? JSON.parse(contributionsCookie) : [];
                     transfers = transfersCookie ? JSON.parse(transfersCookie) : [];
+                    tourName = tourNameCookie || 'Tour Contribution Calculator';
                 } catch (e) {
                     console.error("Error parsing cookies, resetting state.", e);
                     members = [];
                     contributions = [];
                     transfers = [];
+                    tourName = 'Tour Contribution Calculator';
                 }
             };
             
@@ -700,6 +791,10 @@
             };
 
             const render = () => {
+                // Render Tour Title
+                tourTitleHeader.textContent = tourName || 'Tour Contribution Calculator';
+                tourNameInput.value = tourName;
+
                 // Calculate totals first
                 const totalContribution = contributions.reduce((sum, c) => sum + c.amount, 0);
                 const equalShare = members.length > 0 ? totalContribution / members.length : 0;
@@ -891,7 +986,11 @@
             
             const openTransferModal = () => {
                 if (members.length < 2) {
-                    alert("You need at least two members to make a transfer.");
+                    showConfirmModal(
+                        "You need at least two members to make a transfer.",
+                        () => {}, // Empty callback for an OK-only modal
+                        true // isInfoModal flag
+                    );
                     return;
                 }
                 transferFromSelect.innerHTML = members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
@@ -907,7 +1006,11 @@
                 const amount = parseFloat(transferAmountInput.value);
 
                 if (fromId === toId) {
-                    alert("Cannot transfer money to the same person.");
+                    showConfirmModal(
+                        "Cannot transfer money to the same person. Please select different members.",
+                        () => {},
+                        true
+                    );
                     return;
                 }
 
@@ -924,17 +1027,22 @@
                 }
             };
 
+            const openSettingsModal = () => {
+                settingsModal.classList.add('active');
+            };
+
             const closeAllModals = () => {
                 allModals.forEach(modal => modal.classList.remove('active'));
             };
             
             const resetApp = () => {
                 showConfirmModal(
-                    'Are you sure? This will delete all members, contributions, and transfers.',
+                    'Are you sure? This will delete all members, contributions, and transfers. The tour name will not be reset.',
                     () => {
                         members = [];
                         contributions = [];
                         transfers = [];
+                        closeAllModals();
                         saveAndRender();
                     }
                 );
@@ -946,9 +1054,20 @@
             };
 
             // Confirmation Modal Logic
-            const showConfirmModal = (message, callback) => {
+            const showConfirmModal = (message, callback, isInfoModal = false) => {
                 confirmModalText.textContent = message;
                 confirmCallback = callback;
+                
+                if (isInfoModal) {
+                    confirmCancelBtn.style.display = 'none';
+                    confirmOkBtn.textContent = 'OK';
+                    confirmOkBtn.classList.remove('button-danger');
+                } else {
+                    confirmCancelBtn.style.display = 'flex';
+                    confirmOkBtn.textContent = 'Confirm';
+                    confirmOkBtn.classList.add('button-danger');
+                }
+                
                 confirmModal.classList.add('active');
             };
 
@@ -957,11 +1076,188 @@
                 confirmCallback = null;
             };
 
+            // --- Report Generation ---
+            const getReportContent = () => {
+                 if (members.length === 0) {
+                    showConfirmModal("There is no data to generate a report.", () => {}, true);
+                    return null;
+                }
+
+                let reportContent = `Tour Contribution Report: ${tourName}\n`;
+                reportContent += `Generated on: ${new Date().toLocaleString()}\n`;
+                reportContent += "========================================\n\n";
+
+                // --- Summary ---
+                const totalContribution = contributions.reduce((sum, c) => sum + c.amount, 0);
+                const equalShare = members.length > 0 ? totalContribution / members.length : 0;
+
+                reportContent += "--- Summary ---\n";
+                reportContent += `Total Tour Cost: ${formatCurrency(totalContribution)}\n`;
+                reportContent += `Total Members: ${members.length}\n`;
+                reportContent += `Equal Share Per Member: ${formatCurrency(equalShare)}\n\n`;
+                reportContent += "========================================\n\n";
+
+                // --- Member Balances ---
+                reportContent += "--- Member Balances & Dues ---\n";
+                members.forEach(member => {
+                    const memberContributions = contributions.filter(c => c.memberId === member.id);
+                    const memberTotalContributions = memberContributions.reduce((sum, c) => sum + c.amount, 0);
+                    
+                    const transfersSent = transfers.filter(t => t.fromId === member.id);
+                    const totalSent = transfersSent.reduce((sum, t) => sum + t.amount, 0);
+
+                    const transfersReceived = transfers.filter(t => t.toId === member.id);
+                    const totalReceived = transfersReceived.reduce((sum, t) => sum + t.amount, 0);
+
+                    const effectiveTotalPaid = memberTotalContributions + totalSent - totalReceived;
+                    const balance = effectiveTotalPaid - equalShare;
+
+                    reportContent += `\nMember: ${member.name}\n`;
+                    reportContent += `  - Total Contributions: ${formatCurrency(memberTotalContributions)}\n`;
+                    reportContent += `  - Amount Sent in Transfers: ${formatCurrency(totalSent)}\n`;
+                    reportContent += `  - Amount Received in Transfers: ${formatCurrency(totalReceived)}\n`;
+                    reportContent += `  - Effective Amount Paid: ${formatCurrency(effectiveTotalPaid)}\n`;
+                    
+                    if (Math.abs(balance) < 0.01) {
+                        reportContent += `  - Balance: Settled Up\n`;
+                    } else if (balance > 0) {
+                        reportContent += `  - Balance: Gets back ${formatCurrency(balance)}\n`;
+                    } else {
+                        reportContent += `  - Balance: Owes ${formatCurrency(Math.abs(balance))}\n`;
+                    }
+                });
+                reportContent += "\n========================================\n\n";
+
+                // --- All Contributions ---
+                reportContent += "--- All Contributions Log ---\n";
+                if (contributions.length > 0) {
+                    contributions.forEach(c => {
+                        const member = members.find(m => m.id === c.memberId);
+                        reportContent += `- ${member ? member.name : 'Unknown'}: ${c.title} - ${formatCurrency(c.amount)}\n`;
+                    });
+                } else {
+                    reportContent += "No contributions were made.\n";
+                }
+                reportContent += "\n========================================\n\n";
+                
+                // --- All Transfers ---
+                reportContent += "--- All Transfers Log ---\n";
+                if (transfers.length > 0) {
+                    transfers.forEach(t => {
+                        const fromMember = members.find(m => m.id === t.fromId);
+                        const toMember = members.find(m => m.id === t.toId);
+                        reportContent += `- ${fromMember ? fromMember.name : 'Unknown'} -> ${toMember ? toMember.name : 'Unknown'}: ${formatCurrency(t.amount)}\n`;
+                    });
+                } else {
+                    reportContent += "No transfers were made.\n";
+                }
+                return reportContent;
+            };
+
+            const downloadReport = () => {
+                const reportContent = getReportContent();
+                if (!reportContent) return; 
+
+                const safeTourName = (tourName || 'Tour').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `${safeTourName}-report-${new Date().toISOString().split('T')[0]}.txt`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            const copyReportToClipboard = () => {
+                const reportContent = getReportContent();
+                if (!reportContent) return;
+
+                navigator.clipboard.writeText(reportContent).then(() => {
+                    showConfirmModal("Report copied to clipboard!", () => {}, true);
+                }).catch(err => {
+                    console.error('Failed to copy report: ', err);
+                    showConfirmModal("Could not copy report. Your browser might not support this feature.", () => {}, true);
+                });
+            };
+
+            // --- Backup & Restore ---
+            const downloadBackup = () => {
+                const backupData = {
+                    tourName,
+                    members,
+                    contributions,
+                    transfers
+                };
+                const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+                const safeTourName = (tourName || 'Tour').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `${safeTourName}-backup-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            const handleFileUpload = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const backupData = JSON.parse(event.target.result);
+                        // Basic validation
+                        if (!backupData.members || !backupData.contributions || !backupData.transfers || !Array.isArray(backupData.members)) {
+                           throw new Error("Invalid backup file structure.");
+                        }
+
+                        const restoreData = () => {
+                            tourName = backupData.tourName || 'Restored Tour';
+                            members = backupData.members;
+                            contributions = backupData.contributions;
+                            transfers = backupData.transfers;
+                            closeAllModals();
+                            saveAndRender();
+                            showConfirmModal("Backup restored successfully!", () => {}, true);
+                        };
+
+                        if (members.length > 0 || contributions.length > 0 || transfers.length > 0) {
+                            showConfirmModal(
+                                "Uploading this backup will overwrite all current data. Are you sure you want to continue?",
+                                restoreData
+                            );
+                        } else {
+                            restoreData();
+                        }
+
+                    } catch (error) {
+                        console.error("Failed to load backup:", error);
+                        showConfirmModal(`Error: Could not load backup. The file might be corrupted or in the wrong format.`, () => {}, true);
+                    } finally {
+                        // Reset file input to allow uploading the same file again
+                        e.target.value = null;
+                    }
+                };
+                reader.readAsText(file);
+            };
+
+
             // --- Event Listeners ---
             addMemberForm.addEventListener('submit', addMember);
-            resetButton.addEventListener('click', resetApp);
             transferButton.addEventListener('click', openTransferModal);
-            membersSection.addEventListener('click', handleMemberSectionClick);
+            downloadReportButton.addEventListener('click', downloadReport);
+            copyReportButton.addEventListener('click', copyReportToClipboard);
+            settingsButton.addEventListener('click', openSettingsModal);
+
+            // Settings Modal Listeners
+            tourNameInput.addEventListener('input', (e) => {
+                tourName = e.target.value;
+                saveState(); // Save on every keystroke
+                tourTitleHeader.textContent = tourName || 'Tour Contribution Calculator';
+            });
+            backupButton.addEventListener('click', downloadBackup);
+            uploadInput.addEventListener('change', handleFileUpload);
+            resetButton.addEventListener('click', resetApp);
             
             // Modal Listeners
             closeButtons.forEach(btn => btn.addEventListener('click', closeAllModals));
@@ -975,6 +1271,8 @@
             });
             contributionForm.addEventListener('submit', addContribution);
             transferForm.addEventListener('submit', addTransfer);
+            membersSection.addEventListener('click', handleMemberSectionClick);
+
 
             // Confirm Modal Listeners
             confirmCancelBtn.addEventListener('click', hideConfirmModal);
