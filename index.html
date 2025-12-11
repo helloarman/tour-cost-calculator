@@ -7,7 +7,7 @@
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#FFD633"/>
-    <link rel="apple-touch-icon" href="./icon-192.png">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIGZpbGw9IiNGRkQ2MzMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlBvcHBpbnMsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iODAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMTExMTExIj5UQ0M8L3RleHQ+PC9zdmc+">
     <script>
         // Create manifest file dynamically and link it
         const manifest = {
@@ -20,13 +20,13 @@
           "theme_color": "#FFD633",
           "icons": [
             {
-              "src": "./icon-192.png",
+              "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIGZpbGw9IiNGRkQ2MzMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlBvcHBpbnMsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iODAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMTExMTExIj5UQ0M8L3RleHQ+PC9zdmc+",
               "sizes": "192x192",
               "type": "image/svg+xml",
               "purpose": "any maskable"
             },
             {
-              "src": "./icon-512.png",
+              "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIGZpbGw9IiNGRkQ2MzMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlBvcHBpbnMsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iIzExMTExMSI+VENDPC90ZXh0Pjwvc3ZnPg==",
               "sizes": "512x512",
               "type": "image/svg+xml",
               "purpose": "any maskable"
@@ -201,9 +201,13 @@
             padding: 4px;
             line-height: 0;
             color: var(--text-color-secondary);
-            transition: color var(--transition-speed);
+            transition: color var(--transition-speed), transform var(--transition-speed);
         }
         .icon-button:hover {
+            color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+        .icon-button.remove-member-btn:hover {
             color: var(--error-color);
         }
         .icon-button svg {
@@ -271,6 +275,9 @@
         .member-card-title {
             font-size: 16px;
             font-weight: var(--font-weight-bold);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-small);
         }
         .contributions-list {
             list-style: none;
@@ -287,6 +294,14 @@
             background: #fafafa;
             padding: 8px 12px;
             border-radius: 8px;
+            cursor: pointer;
+            transition: background-color var(--transition-speed);
+        }
+        .contribution-item:hover {
+            background-color: #f0f0f0;
+        }
+        .transfer-item {
+            cursor: default;
         }
         .transfer-item .contribution-title {
             display: flex;
@@ -357,6 +372,8 @@
             max-width: 400px;
             transform: scale(0.9);
             transition: transform var(--transition-speed);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .modal-overlay.active .modal-content {
             transform: scale(1);
@@ -371,7 +388,7 @@
             font-size: var(--subheadline-size);
             font-weight: var(--font-weight-bold);
         }
-        #contribution-form, #transfer-form {
+        #contribution-form, #transfer-form, #edit-member-form, #contribution-details-form {
             display: grid;
             gap: var(--spacing-medium);
         }
@@ -419,6 +436,10 @@
             border-top: 1px solid var(--border-color);
             padding-top: var(--spacing-medium);
             margin-top: var(--spacing-small);
+            display: grid;
+            gap: var(--spacing-small);
+        }
+        .summary-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -449,6 +470,36 @@
         .settled-balance {
             background-color: #f5f5f5; /* Light Grey */
             color: var(--text-color-secondary);
+        }
+        
+        /* Member Select List (Chips) */
+        .member-select-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-small);
+        }
+        .member-select-item {
+            background-color: #f0f0f0;
+            border: 1px solid transparent;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: var(--caption-size);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+        }
+        .member-select-item.selected {
+            background-color: #fff9db; /* Light Yellow */
+            border-color: var(--primary-color);
+            color: var(--secondary-color);
+            font-weight: var(--font-weight-medium);
+        }
+        .member-select-item:not(.selected) {
+            opacity: 0.6;
+            text-decoration: line-through;
         }
 
         /* --- Mobile Responsiveness --- */
@@ -538,8 +589,12 @@
                 <div class="summary-card-value" id="total-contribution">৳0.00</div>
             </div>
             <div class="summary-card">
-                <div class="summary-card-title">Equal Share</div>
+                <div class="summary-card-title">Equal Share (Avg)</div>
                 <div class="summary-card-value" id="equal-share">৳0.00 <span>per person</span></div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-title">Total Waivers</div>
+                <div class="summary-card-value" id="total-waivers">৳0.00</div>
             </div>
         </section>
         
@@ -598,11 +653,11 @@
     </div>
 
 
-    <!-- Contribution Modal -->
+    <!-- Contribution Modal (Add) -->
     <div id="contribution-modal" class="modal-overlay">
         <div class="modal-content">
             <header class="modal-header">
-                <h2 class="modal-title" id="modal-title">Add Contribution</h2>
+                <h2 class="modal-title" id="contribution-modal-title">Add Contribution</h2>
                 <button class="icon-button close-modal-btn">
                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
@@ -620,6 +675,68 @@
                 <div class="modal-actions">
                     <button type="button" class="cta-button button-secondary cancel-modal-btn">Cancel</button>
                     <button type="submit" class="cta-button">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Contribution & Exceptions Modal -->
+    <div id="contribution-details-modal" class="modal-overlay">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 class="modal-title">Contribution Details</h2>
+                <button class="icon-button close-modal-btn">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </header>
+            <form id="contribution-details-form">
+                <input type="hidden" id="detail-contribution-id">
+                <div class="form-group">
+                    <label for="detail-title">Title</label>
+                    <input type="text" id="detail-title" class="input-field" required>
+                </div>
+                <div class="form-group">
+                    <label for="detail-amount">Amount (৳)</label>
+                    <input type="number" id="detail-amount" class="input-field" step="0.01" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Split among (Uncheck to except):</label>
+                    <div id="exception-members-list" class="member-select-list">
+                        <!-- Chips will be injected here -->
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="cta-button button-secondary cancel-modal-btn">Cancel</button>
+                    <button type="submit" class="cta-button">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Member Modal -->
+    <div id="edit-member-modal" class="modal-overlay">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 class="modal-title" id="edit-member-modal-title">Edit Member</h2>
+                <button class="icon-button close-modal-btn">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </header>
+            <form id="edit-member-form">
+                <input type="hidden" id="edit-member-id">
+                <div class="form-group">
+                    <label for="edit-member-name">Member Name</label>
+                    <input type="text" id="edit-member-name" class="input-field" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-member-waiver">Personal Waiver (৳)</label>
+                    <input type="number" id="edit-member-waiver" class="input-field" placeholder="0.00" step="0.01" min="0" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cta-button button-secondary cancel-modal-btn">Cancel</button>
+                    <button type="submit" class="cta-button">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -679,6 +796,7 @@
             const membersSection = document.getElementById('members-section');
             const totalContributionEl = document.getElementById('total-contribution');
             const equalShareEl = document.getElementById('equal-share');
+            const totalWaiversEl = document.getElementById('total-waivers');
             const transferButton = document.getElementById('transfer-button');
             const downloadReportButton = document.getElementById('download-report-button');
             const copyReportButton = document.getElementById('copy-report-button');
@@ -691,13 +809,29 @@
             const uploadInput = document.getElementById('upload-input');
             const resetButton = document.getElementById('reset-button');
 
-            // Contribution Modal Elements
+            // Contribution Modal Elements (Add)
             const contributionModal = document.getElementById('contribution-modal');
-            const modalTitle = document.getElementById('modal-title');
+            const contributionModalTitle = document.getElementById('contribution-modal-title');
             const contributionForm = document.getElementById('contribution-form');
             const contributionMemberIdInput = document.getElementById('contribution-member-id');
             const contributionTitleInput = document.getElementById('contribution-title');
             const contributionAmountInput = document.getElementById('contribution-amount');
+            
+            // Contribution Details Modal Elements (Edit/Exceptions)
+            const contributionDetailsModal = document.getElementById('contribution-details-modal');
+            const contributionDetailsForm = document.getElementById('contribution-details-form');
+            const detailContributionIdInput = document.getElementById('detail-contribution-id');
+            const detailTitleInput = document.getElementById('detail-title');
+            const detailAmountInput = document.getElementById('detail-amount');
+            const exceptionMembersList = document.getElementById('exception-members-list');
+
+            // Edit Member Modal Elements
+            const editMemberModal = document.getElementById('edit-member-modal');
+            const editMemberModalTitle = document.getElementById('edit-member-modal-title');
+            const editMemberForm = document.getElementById('edit-member-form');
+            const editMemberIdInput = document.getElementById('edit-member-id');
+            const editMemberNameInput = document.getElementById('edit-member-name');
+            const editMemberWaiverInput = document.getElementById('edit-member-waiver');
 
             // Transfer Modal Elements
             const transferModal = document.getElementById('transfer-modal');
@@ -770,7 +904,16 @@
 
                 try {
                     members = membersCookie ? JSON.parse(membersCookie) : [];
+                    members.forEach(m => {
+                        if (m.waiver === undefined) m.waiver = 0;
+                    });
+
                     contributions = contributionsCookie ? JSON.parse(contributionsCookie) : [];
+                    // Ensure excludedMembers array exists
+                    contributions.forEach(c => {
+                        if (!c.excludedMembers) c.excludedMembers = [];
+                    });
+
                     transfers = transfersCookie ? JSON.parse(transfersCookie) : [];
                     tourName = tourNameCookie || 'Tour Contribution Calculator';
                 } catch (e) {
@@ -791,14 +934,35 @@
             };
 
             const render = () => {
-                // Render Tour Title
                 tourTitleHeader.textContent = tourName || 'Tour Contribution Calculator';
                 tourNameInput.value = tourName;
 
-                // Calculate totals first
-                const totalContribution = contributions.reduce((sum, c) => sum + c.amount, 0);
-                const equalShare = members.length > 0 ? totalContribution / members.length : 0;
+                // --- Core Calculation Logic ---
+                // We need to calculate how much each member "should" pay based on all contributions
+                // considering exclusions.
+                const memberSharedCosts = {};
+                members.forEach(m => memberSharedCosts[m.id] = 0);
 
+                contributions.forEach(c => {
+                    const excluded = c.excludedMembers || [];
+                    const includedCount = members.length - excluded.length;
+                    
+                    if (includedCount > 0) {
+                        const sharePerPerson = c.amount / includedCount;
+                        members.forEach(m => {
+                            if (!excluded.includes(m.id)) {
+                                memberSharedCosts[m.id] += sharePerPerson;
+                            }
+                        });
+                    }
+                });
+
+                const totalContribution = contributions.reduce((sum, c) => sum + c.amount, 0);
+                const totalWaivers = members.reduce((sum, m) => sum + (m.waiver || 0), 0);
+                
+                // Average share is now just an indicator, not the exact calculation base
+                const averageShare = members.length > 0 ? totalContribution / members.length : 0;
+                
                 // Render Members
                 membersSection.innerHTML = '';
                 if (members.length === 0) {
@@ -815,26 +979,33 @@
                         const totalReceived = transfersReceived.reduce((sum, t) => sum + t.amount, 0);
 
                         const effectiveTotalPaid = memberTotalContributions + totalSent - totalReceived;
-                        const balance = effectiveTotalPaid - equalShare;
+                        
+                        // Final Share = Calculated Shared Cost - Waiver
+                        const finalPersonalShare = (memberSharedCosts[member.id] || 0) - (member.waiver || 0);
+                        
+                        // Balance = What they paid - What they should pay
+                        const balance = effectiveTotalPaid - finalPersonalShare;
 
                         const memberCard = document.createElement('div');
                         memberCard.className = 'member-card';
                         memberCard.dataset.memberId = member.id;
                         
-                        // Combine contributions and transfers for a unified activity log
                         const activityLog = [
                             ...memberContributions.map(c => ({ ...c, type: 'contribution', date: c.id })),
                             ...transfersSent.map(t => ({ ...t, type: 'transfer-out', date: t.id })),
                             ...transfersReceived.map(t => ({ ...t, type: 'transfer-in', date: t.id }))
                         ].sort((a, b) => a.date - b.date);
 
-                        let activityHtml = '';
-                        if (activityLog.length > 0) {
-                            activityHtml = activityLog.map(item => {
+                        let activityHtml = activityLog.length > 0
+                            ? activityLog.map(item => {
                                 if (item.type === 'contribution') {
+                                    const excluded = item.excludedMembers || [];
+                                    const isEveryone = excluded.length === 0;
+                                    const splitText = isEveryone ? '' : ` <span style="font-size:10px; color:var(--error-color);">(${members.length - excluded.length} ppl)</span>`;
+                                    
                                     return `
                                     <li class="contribution-item" data-contribution-id="${item.id}">
-                                        <span class="contribution-title">${item.title}</span>
+                                        <span class="contribution-title">${item.title}${splitText}</span>
                                         <div>
                                             <span class="contribution-amount">${formatCurrency(item.amount)}</span>
                                             <button class="icon-button remove-contribution-btn">
@@ -863,13 +1034,11 @@
                                         <span class="contribution-amount">${formatCurrency(item.amount, true)}</span>
                                     </li>`;
                                 }
-                            }).join('');
-                        } else {
-                            activityHtml = '<li class="empty-contributions">No activity yet.</li>';
-                        }
+                            }).join('')
+                            : '<li class="empty-contributions">No activity yet.</li>';
                         
                         let balanceHtml = '';
-                        if (members.length > 1 && totalContribution > 0) {
+                        if (members.length > 0 && totalContribution > 0) {
                             if (Math.abs(balance) < 0.01) {
                                 balanceHtml = `<div class="balance-info settled-balance">Settled Up</div>`;
                             } else if (balance > 0) {
@@ -878,10 +1047,22 @@
                                 balanceHtml = `<div class="balance-info negative-balance">Owes ${formatCurrency(Math.abs(balance))}</div>`;
                             }
                         }
+                        
+                        const waiverHtml = (member.waiver || 0) > 0 ? `
+                            <div class="summary-row">
+                                <div class="member-total-label">Waiver</div>
+                                <div class="member-total-amount">${formatCurrency(member.waiver)}</div>
+                            </div>
+                        ` : '';
 
                         memberCard.innerHTML = `
                             <div class="member-card-header">
-                                <h2 class="member-card-title">${member.name}</h2>
+                                <h2 class="member-card-title">
+                                    <span>${member.name}</span>
+                                    <button class="icon-button edit-member-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                    </button>
+                                </h2>
                                 <button class="icon-button remove-member-btn">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                 </button>
@@ -890,11 +1071,19 @@
                                 ${activityHtml}
                             </ul>
                             <div class="member-card-summary">
-                                <div>
+                                <div class="summary-row">
                                     <div class="member-total-label">Effective Paid</div>
                                     <div class="member-total-amount">${formatCurrency(effectiveTotalPaid)}</div>
                                 </div>
-                                ${balanceHtml}
+                                ${waiverHtml}
+                                <div class="summary-row">
+                                     <div class="member-total-label">Final Share</div>
+                                     <div class="member-total-amount">${formatCurrency(finalPersonalShare)}</div>
+                                </div>
+                                <div class="summary-row">
+                                    <div class="member-total-label">Balance</div>
+                                    ${balanceHtml}
+                                </div>
                             </div>
                             <button class="cta-button button-sm add-contribution-btn">Add Contribution</button>
                         `;
@@ -904,7 +1093,8 @@
 
                 // Render Summary
                 totalContributionEl.textContent = formatCurrency(totalContribution);
-                equalShareEl.innerHTML = `${formatCurrency(equalShare)} <span>per person</span>`;
+                equalShareEl.innerHTML = `${formatCurrency(averageShare)} <span>avg/person</span>`;
+                totalWaiversEl.textContent = formatCurrency(totalWaivers);
             };
             
             const addMember = (e) => {
@@ -913,7 +1103,8 @@
                 if (name) {
                     const newMember = {
                         id: Date.now(),
-                        name: name
+                        name: name,
+                        waiver: 0
                     };
                     members.push(newMember);
                     memberNameInput.value = '';
@@ -927,7 +1118,6 @@
                 
                 const memberId = parseInt(memberCard.dataset.memberId);
 
-                // Remove Member
                 if (e.target.closest('.remove-member-btn')) {
                     showConfirmModal(
                         `Are you sure you want to remove this member and all related data?`,
@@ -938,30 +1128,104 @@
                             saveAndRender();
                         }
                     );
+                    return;
                 }
 
-                // Add Contribution (Open Modal)
                 if (e.target.closest('.add-contribution-btn')) {
                     openContributionModal(memberId);
+                    return;
+                }
+                
+                if (e.target.closest('.edit-member-btn')) {
+                    openEditMemberModal(memberId);
+                    return;
                 }
 
-                // Remove Contribution
                 if (e.target.closest('.remove-contribution-btn')) {
+                    e.stopPropagation(); // Stop propagation so item click doesn't fire
                     const contributionItem = e.target.closest('.contribution-item');
                     const contributionId = parseInt(contributionItem.dataset.contributionId);
                     contributions = contributions.filter(c => c.id !== contributionId);
                     saveAndRender();
+                    return;
+                }
+
+                // Handle click on contribution item to open details modal
+                const contributionItem = e.target.closest('.contribution-item');
+                if (contributionItem) {
+                    const contributionId = parseInt(contributionItem.dataset.contributionId);
+                    openContributionDetailsModal(contributionId);
                 }
             };
 
             const openContributionModal = (memberId) => {
                 const member = members.find(m => m.id === memberId);
                 if (member) {
-                    modalTitle.textContent = `Add for ${member.name}`;
+                    contributionModalTitle.textContent = `Add for ${member.name}`;
                     contributionMemberIdInput.value = memberId;
                     contributionForm.reset();
                     contributionModal.classList.add('active');
                     contributionTitleInput.focus();
+                }
+            };
+
+            const openContributionDetailsModal = (contributionId) => {
+                const contribution = contributions.find(c => c.id === contributionId);
+                if (!contribution) return;
+
+                detailContributionIdInput.value = contribution.id;
+                detailTitleInput.value = contribution.title;
+                detailAmountInput.value = contribution.amount;
+
+                // Render Member Selection List
+                exceptionMembersList.innerHTML = '';
+                const excluded = contribution.excludedMembers || [];
+
+                members.forEach(member => {
+                    const isSelected = !excluded.includes(member.id);
+                    const chip = document.createElement('div');
+                    chip.className = `member-select-item ${isSelected ? 'selected' : ''}`;
+                    chip.textContent = member.name;
+                    chip.dataset.memberId = member.id;
+                    
+                    chip.addEventListener('click', () => {
+                        chip.classList.toggle('selected');
+                    });
+                    
+                    exceptionMembersList.appendChild(chip);
+                });
+
+                contributionDetailsModal.classList.add('active');
+            };
+
+            const handleContributionUpdate = (e) => {
+                e.preventDefault();
+                const id = parseInt(detailContributionIdInput.value);
+                const title = detailTitleInput.value.trim();
+                const amount = parseFloat(detailAmountInput.value);
+                
+                // Gather excluded members
+                const newExcluded = [];
+                const chips = exceptionMembersList.querySelectorAll('.member-select-item');
+                chips.forEach(chip => {
+                    if (!chip.classList.contains('selected')) {
+                        newExcluded.push(parseInt(chip.dataset.memberId));
+                    }
+                });
+
+                // Prevent excluding everyone
+                if (newExcluded.length === members.length) {
+                    showConfirmModal("You cannot exclude everyone from a contribution.", () => {}, true);
+                    return;
+                }
+
+                const contribution = contributions.find(c => c.id === id);
+                if (contribution && title && amount >= 0) {
+                    contribution.title = title;
+                    contribution.amount = amount;
+                    contribution.excludedMembers = newExcluded;
+                    closeAllModals();
+                    saveAndRender();
                 }
             };
 
@@ -976,9 +1240,36 @@
                         id: Date.now(),
                         memberId: memberId,
                         title: title,
-                        amount: amount
+                        amount: amount,
+                        excludedMembers: []
                     };
                     contributions.push(newContribution);
+                    closeAllModals();
+                    saveAndRender();
+                }
+            };
+
+            const openEditMemberModal = (memberId) => {
+                const member = members.find(m => m.id === memberId);
+                if (member) {
+                    editMemberModalTitle.textContent = `Edit ${member.name}`;
+                    editMemberIdInput.value = member.id;
+                    editMemberNameInput.value = member.name;
+                    editMemberWaiverInput.value = (member.waiver || 0).toFixed(2);
+                    editMemberModal.classList.add('active');
+                }
+            };
+
+            const handleUpdateMember = (e) => {
+                e.preventDefault();
+                const memberId = parseInt(editMemberIdInput.value);
+                const newName = editMemberNameInput.value.trim();
+                const newWaiver = parseFloat(editMemberWaiverInput.value);
+                
+                const member = members.find(m => m.id === memberId);
+                if (member && newName && newWaiver >= 0) {
+                    member.name = newName;
+                    member.waiver = newWaiver;
                     closeAllModals();
                     saveAndRender();
                 }
@@ -986,11 +1277,7 @@
             
             const openTransferModal = () => {
                 if (members.length < 2) {
-                    showConfirmModal(
-                        "You need at least two members to make a transfer.",
-                        () => {}, // Empty callback for an OK-only modal
-                        true // isInfoModal flag
-                    );
+                    showConfirmModal("You need at least two members to make a transfer.", () => {}, true);
                     return;
                 }
                 transferFromSelect.innerHTML = members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
@@ -1006,38 +1293,23 @@
                 const amount = parseFloat(transferAmountInput.value);
 
                 if (fromId === toId) {
-                    showConfirmModal(
-                        "Cannot transfer money to the same person. Please select different members.",
-                        () => {},
-                        true
-                    );
+                    showConfirmModal("Cannot transfer money to the same person.", () => {}, true);
                     return;
                 }
 
                 if (fromId && toId && amount > 0) {
-                    const newTransfer = {
-                        id: Date.now(),
-                        fromId,
-                        toId,
-                        amount
-                    };
-                    transfers.push(newTransfer);
+                    transfers.push({ id: Date.now(), fromId, toId, amount });
                     closeAllModals();
                     saveAndRender();
                 }
             };
 
-            const openSettingsModal = () => {
-                settingsModal.classList.add('active');
-            };
-
-            const closeAllModals = () => {
-                allModals.forEach(modal => modal.classList.remove('active'));
-            };
+            const openSettingsModal = () => settingsModal.classList.add('active');
+            const closeAllModals = () => allModals.forEach(modal => modal.classList.remove('active'));
             
             const resetApp = () => {
                 showConfirmModal(
-                    'Are you sure? This will delete all members, contributions, and transfers. The tour name will not be reset.',
+                    'This will delete all members, contributions, and transfers. Are you sure?',
                     () => {
                         members = [];
                         contributions = [];
@@ -1053,21 +1325,12 @@
                 render();
             };
 
-            // Confirmation Modal Logic
             const showConfirmModal = (message, callback, isInfoModal = false) => {
                 confirmModalText.textContent = message;
                 confirmCallback = callback;
-                
-                if (isInfoModal) {
-                    confirmCancelBtn.style.display = 'none';
-                    confirmOkBtn.textContent = 'OK';
-                    confirmOkBtn.classList.remove('button-danger');
-                } else {
-                    confirmCancelBtn.style.display = 'flex';
-                    confirmOkBtn.textContent = 'Confirm';
-                    confirmOkBtn.classList.add('button-danger');
-                }
-                
+                confirmCancelBtn.style.display = isInfoModal ? 'none' : 'flex';
+                confirmOkBtn.textContent = isInfoModal ? 'OK' : 'Confirm';
+                confirmOkBtn.classList.toggle('button-danger', !isInfoModal);
                 confirmModal.classList.add('active');
             };
 
@@ -1076,93 +1339,95 @@
                 confirmCallback = null;
             };
 
-            // --- Report Generation ---
             const getReportContent = () => {
                  if (members.length === 0) {
                     showConfirmModal("There is no data to generate a report.", () => {}, true);
                     return null;
                 }
-
-                let reportContent = `Tour Contribution Report: ${tourName}\n`;
-                reportContent += `Generated on: ${new Date().toLocaleString()}\n`;
-                reportContent += "========================================\n\n";
-
-                // --- Summary ---
-                const totalContribution = contributions.reduce((sum, c) => sum + c.amount, 0);
-                const equalShare = members.length > 0 ? totalContribution / members.length : 0;
-
-                reportContent += "--- Summary ---\n";
-                reportContent += `Total Tour Cost: ${formatCurrency(totalContribution)}\n`;
-                reportContent += `Total Members: ${members.length}\n`;
-                reportContent += `Equal Share Per Member: ${formatCurrency(equalShare)}\n\n`;
-                reportContent += "========================================\n\n";
-
-                // --- Member Balances ---
-                reportContent += "--- Member Balances & Dues ---\n";
-                members.forEach(member => {
-                    const memberContributions = contributions.filter(c => c.memberId === member.id);
-                    const memberTotalContributions = memberContributions.reduce((sum, c) => sum + c.amount, 0);
-                    
-                    const transfersSent = transfers.filter(t => t.fromId === member.id);
-                    const totalSent = transfersSent.reduce((sum, t) => sum + t.amount, 0);
-
-                    const transfersReceived = transfers.filter(t => t.toId === member.id);
-                    const totalReceived = transfersReceived.reduce((sum, t) => sum + t.amount, 0);
-
-                    const effectiveTotalPaid = memberTotalContributions + totalSent - totalReceived;
-                    const balance = effectiveTotalPaid - equalShare;
-
-                    reportContent += `\nMember: ${member.name}\n`;
-                    reportContent += `  - Total Contributions: ${formatCurrency(memberTotalContributions)}\n`;
-                    reportContent += `  - Amount Sent in Transfers: ${formatCurrency(totalSent)}\n`;
-                    reportContent += `  - Amount Received in Transfers: ${formatCurrency(totalReceived)}\n`;
-                    reportContent += `  - Effective Amount Paid: ${formatCurrency(effectiveTotalPaid)}\n`;
-                    
-                    if (Math.abs(balance) < 0.01) {
-                        reportContent += `  - Balance: Settled Up\n`;
-                    } else if (balance > 0) {
-                        reportContent += `  - Balance: Gets back ${formatCurrency(balance)}\n`;
-                    } else {
-                        reportContent += `  - Balance: Owes ${formatCurrency(Math.abs(balance))}\n`;
+                let content = `Tour Contribution Report: ${tourName}\nGenerated on: ${new Date().toLocaleString()}\n========================================\n\n`;
+                
+                // Recalculate Logic for Report
+                const memberSharedCosts = {};
+                members.forEach(m => memberSharedCosts[m.id] = 0);
+                contributions.forEach(c => {
+                    const excluded = c.excludedMembers || [];
+                    const includedCount = members.length - excluded.length;
+                    if (includedCount > 0) {
+                        const share = c.amount / includedCount;
+                        members.forEach(m => {
+                            if (!excluded.includes(m.id)) memberSharedCosts[m.id] += share;
+                        });
                     }
                 });
-                reportContent += "\n========================================\n\n";
 
-                // --- All Contributions ---
-                reportContent += "--- All Contributions Log ---\n";
-                if (contributions.length > 0) {
-                    contributions.forEach(c => {
-                        const member = members.find(m => m.id === c.memberId);
-                        reportContent += `- ${member ? member.name : 'Unknown'}: ${c.title} - ${formatCurrency(c.amount)}\n`;
-                    });
-                } else {
-                    reportContent += "No contributions were made.\n";
-                }
-                reportContent += "\n========================================\n\n";
+                const totalContribution = contributions.reduce((sum, c) => sum + c.amount, 0);
+                const totalWaivers = members.reduce((sum, m) => sum + (m.waiver || 0), 0);
                 
-                // --- All Transfers ---
-                reportContent += "--- All Transfers Log ---\n";
-                if (transfers.length > 0) {
-                    transfers.forEach(t => {
-                        const fromMember = members.find(m => m.id === t.fromId);
-                        const toMember = members.find(m => m.id === t.toId);
-                        reportContent += `- ${fromMember ? fromMember.name : 'Unknown'} -> ${toMember ? toMember.name : 'Unknown'}: ${formatCurrency(t.amount)}\n`;
-                    });
-                } else {
-                    reportContent += "No transfers were made.\n";
-                }
-                return reportContent;
+                content += "--- Summary ---\n";
+                content += `Total Tour Cost: ${formatCurrency(totalContribution)}\n`;
+                content += `Total Waivers: ${formatCurrency(totalWaivers)}\n`;
+                content += `Total Members: ${members.length}\n\n========================================\n\n`;
+
+                content += "--- Member Balances & Dues ---\n";
+                members.forEach(member => {
+                    const memberTotalContributions = contributions.filter(c => c.memberId === member.id).reduce((sum, c) => sum + c.amount, 0);
+                    const totalSent = transfers.filter(t => t.fromId === member.id).reduce((sum, t) => sum + t.amount, 0);
+                    const totalReceived = transfers.filter(t => t.toId === member.id).reduce((sum, t) => sum + t.amount, 0);
+                    const effectiveTotalPaid = memberTotalContributions + totalSent - totalReceived;
+                    const finalPersonalShare = (memberSharedCosts[member.id] || 0) - (member.waiver || 0);
+                    const balance = effectiveTotalPaid - finalPersonalShare;
+
+                    content += `\nMember: ${member.name}\n`;
+                    content += `  - Total Contributions: ${formatCurrency(memberTotalContributions)}\n`;
+                    content += `  - Amount Sent: ${formatCurrency(totalSent)}\n`;
+                    content += `  - Amount Received: ${formatCurrency(totalReceived)}\n`;
+                    content += `  - Personal Waiver: ${formatCurrency(member.waiver || 0)}\n`;
+                    content += `  - Final Personal Share: ${formatCurrency(finalPersonalShare)}\n`;
+                    
+                    if (Math.abs(balance) < 0.01) {
+                        content += `  - Balance: Settled Up\n`;
+                    } else if (balance > 0) {
+                        content += `  - Balance: Gets back ${formatCurrency(balance)}\n`;
+                    } else {
+                        content += `  - Balance: Owes ${formatCurrency(Math.abs(balance))}\n`;
+                    }
+                });
+                content += "\n========================================\n\n--- All Contributions Log ---\n";
+                contributions.forEach(c => {
+                    const member = members.find(m => m.id === c.memberId);
+                    const excluded = c.excludedMembers || [];
+                    
+                    let splitInfo = '';
+                    if (excluded.length > 0) {
+                        const skippedNames = excluded.map(id => {
+                            const m = members.find(mem => mem.id === id);
+                            return m ? m.name : 'Unknown';
+                        }).join(', ');
+                        splitInfo = ` (Skipped: ${skippedNames})`;
+                    }
+                    
+                    content += `- ${member ? member.name : 'Unknown'}: ${c.title}${splitInfo} - ${formatCurrency(c.amount)}\n`;
+                });
+                if (contributions.length === 0) content += "No contributions were made.\n";
+
+                content += "\n========================================\n\n--- All Transfers Log ---\n";
+                 transfers.forEach(t => {
+                    const from = members.find(m => m.id === t.fromId);
+                    const to = members.find(m => m.id === t.toId);
+                    content += `- ${from ? from.name : 'N/A'} -> ${to ? to.name : 'N/A'}: ${formatCurrency(t.amount)}\n`;
+                });
+                if (transfers.length === 0) content += "No transfers were made.\n";
+                return content;
             };
 
             const downloadReport = () => {
                 const reportContent = getReportContent();
                 if (!reportContent) return; 
-
-                const safeTourName = (tourName || 'Tour').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                const safeName = (tourName || 'Tour').replace(/[^a-z0-9]/gi, '_').toLowerCase();
                 const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = `${safeTourName}-report-${new Date().toISOString().split('T')[0]}.txt`;
+                link.download = `${safeName}-report-${new Date().toISOString().split('T')[0]}.txt`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -1171,28 +1436,21 @@
             const copyReportToClipboard = () => {
                 const reportContent = getReportContent();
                 if (!reportContent) return;
-
-                navigator.clipboard.writeText(reportContent).then(() => {
-                    showConfirmModal("Report copied to clipboard!", () => {}, true);
-                }).catch(err => {
-                    console.error('Failed to copy report: ', err);
-                    showConfirmModal("Could not copy report. Your browser might not support this feature.", () => {}, true);
-                });
+                navigator.clipboard.writeText(reportContent)
+                    .then(() => showConfirmModal("Report copied to clipboard!", () => {}, true))
+                    .catch(err => {
+                        console.error('Failed to copy report: ', err);
+                        showConfirmModal("Could not copy report.", () => {}, true);
+                    });
             };
 
-            // --- Backup & Restore ---
             const downloadBackup = () => {
-                const backupData = {
-                    tourName,
-                    members,
-                    contributions,
-                    transfers
-                };
+                const backupData = { tourName, members, contributions, transfers };
                 const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
-                const safeTourName = (tourName || 'Tour').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                const safeName = (tourName || 'Tour').replace(/[^a-z0-9]/gi, '_').toLowerCase();
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = `${safeTourName}-backup-${new Date().toISOString().split('T')[0]}.json`;
+                link.download = `${safeName}-backup-${new Date().toISOString().split('T')[0]}.json`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -1201,46 +1459,33 @@
             const handleFileUpload = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
-
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     try {
-                        const backupData = JSON.parse(event.target.result);
-                        // Basic validation
-                        if (!backupData.members || !backupData.contributions || !backupData.transfers || !Array.isArray(backupData.members)) {
-                           throw new Error("Invalid backup file structure.");
-                        }
-
-                        const restoreData = () => {
-                            tourName = backupData.tourName || 'Restored Tour';
-                            members = backupData.members;
-                            contributions = backupData.contributions;
-                            transfers = backupData.transfers;
+                        const data = JSON.parse(event.target.result);
+                        if (!data.members || !data.contributions || !data.transfers) throw new Error("Invalid backup file.");
+                        const restore = () => {
+                            tourName = data.tourName || 'Restored Tour';
+                            members = data.members;
+                            contributions = data.contributions;
+                            transfers = data.transfers;
                             closeAllModals();
                             saveAndRender();
                             showConfirmModal("Backup restored successfully!", () => {}, true);
                         };
-
-                        if (members.length > 0 || contributions.length > 0 || transfers.length > 0) {
-                            showConfirmModal(
-                                "Uploading this backup will overwrite all current data. Are you sure you want to continue?",
-                                restoreData
-                            );
+                        if (members.length > 0) {
+                            showConfirmModal("This will overwrite current data. Continue?", restore);
                         } else {
-                            restoreData();
+                            restore();
                         }
-
                     } catch (error) {
-                        console.error("Failed to load backup:", error);
-                        showConfirmModal(`Error: Could not load backup. The file might be corrupted or in the wrong format.`, () => {}, true);
+                        showConfirmModal(`Error: Could not load backup.`, () => {}, true);
                     } finally {
-                        // Reset file input to allow uploading the same file again
                         e.target.value = null;
                     }
                 };
                 reader.readAsText(file);
             };
-
 
             // --- Event Listeners ---
             addMemberForm.addEventListener('submit', addMember);
@@ -1248,45 +1493,28 @@
             downloadReportButton.addEventListener('click', downloadReport);
             copyReportButton.addEventListener('click', copyReportToClipboard);
             settingsButton.addEventListener('click', openSettingsModal);
-
-            // Settings Modal Listeners
             tourNameInput.addEventListener('input', (e) => {
                 tourName = e.target.value;
-                saveState(); // Save on every keystroke
+                saveState();
                 tourTitleHeader.textContent = tourName || 'Tour Contribution Calculator';
             });
             backupButton.addEventListener('click', downloadBackup);
             uploadInput.addEventListener('change', handleFileUpload);
             resetButton.addEventListener('click', resetApp);
-            
-            // Modal Listeners
             closeButtons.forEach(btn => btn.addEventListener('click', closeAllModals));
             cancelButtons.forEach(btn => btn.addEventListener('click', closeAllModals));
-            allModals.forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        closeAllModals();
-                    }
-                });
-            });
+            allModals.forEach(m => m.addEventListener('click', (e) => e.target === m && closeAllModals()));
             contributionForm.addEventListener('submit', addContribution);
+            contributionDetailsForm.addEventListener('submit', handleContributionUpdate); // New Listener
+            editMemberForm.addEventListener('submit', handleUpdateMember);
             transferForm.addEventListener('submit', addTransfer);
             membersSection.addEventListener('click', handleMemberSectionClick);
-
-
-            // Confirm Modal Listeners
             confirmCancelBtn.addEventListener('click', hideConfirmModal);
             confirmOkBtn.addEventListener('click', () => {
-                if (typeof confirmCallback === 'function') {
-                    confirmCallback();
-                }
+                if (typeof confirmCallback === 'function') confirmCallback();
                 hideConfirmModal();
             });
-            confirmModal.addEventListener('click', (e) => {
-                if (e.target === confirmModal) {
-                    hideConfirmModal();
-                }
-            });
+            confirmModal.addEventListener('click', (e) => e.target === confirmModal && hideConfirmModal());
 
             // --- Initial Load ---
             loadState();
@@ -1296,81 +1524,20 @@
             if ('serviceWorker' in navigator) {
                 const swContent = `
                     const CACHE_NAME = 'tour-calc-cache-v1';
-                    // Since all CSS and JS are inline, we only need to cache the root page.
                     const ASSETS_TO_CACHE = ['./'];
-
-                    // Install event: cache the app shell.
-                    self.addEventListener('install', (event) => {
-                        event.waitUntil(
-                            caches.open(CACHE_NAME)
-                                .then((cache) => {
-                                    console.log('Service Worker: Caching App Shell');
-                                    return cache.addAll(ASSETS_TO_CACHE);
-                                })
-                        );
-                    });
-
-                    // Activate event: clean up old caches.
-                    self.addEventListener('activate', (event) => {
-                        event.waitUntil(
-                            caches.keys().then((cacheNames) => {
-                                return Promise.all(
-                                    cacheNames.map((cacheName) => {
-                                        if (cacheName !== CACHE_NAME) {
-                                            console.log('Service Worker: Clearing old cache');
-                                            return caches.delete(cacheName);
-                                        }
-                                    })
-                                );
-                            })
-                        );
-                        return self.clients.claim(); // Ensures the new service worker takes control immediately.
-                    });
-
-                    // Fetch event: implements a 'Network falling back to cache' strategy.
-                    self.addEventListener('fetch', (event) => {
-                        // We only handle GET requests.
-                        if (event.request.method !== 'GET') {
-                            return;
-                        }
-
-                        event.respondWith(
-                            fetch(event.request)
-                                .then(networkResponse => {
-                                    // If we get a valid response, cache it and return it.
-                                    const responseToCache = networkResponse.clone();
-                                    caches.open(CACHE_NAME)
-                                        .then(cache => {
-                                            cache.put(event.request, responseToCache);
-                                        });
-                                    return networkResponse;
-                                })
-                                .catch(() => {
-                                    // If the network request fails (e.g., offline), try to serve from the cache.
-                                    return caches.match(event.request)
-                                        .then(cachedResponse => {
-                                            return cachedResponse;
-                                        });
-                                })
-                        );
-                    });
+                    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS_TO_CACHE))));
+                    self.addEventListener('activate', e => e.waitUntil(caches.keys().then(n => Promise.all(n.map(c => c !== CACHE_NAME ? caches.delete(c) : null)))));
+                    self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
                 `;
-                
                 const swBlob = new Blob([swContent], { type: 'application/javascript' });
                 const swUrl = URL.createObjectURL(swBlob);
-
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register(swUrl)
-                        .then(registration => {
-                            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                        })
-                        .catch(err => {
-                            console.log('ServiceWorker registration failed: ', err);
-                        });
+                        .then(reg => console.log('SW registration successful:', reg.scope))
+                        .catch(err => console.log('SW registration failed:', err));
                 });
             }
         });
     </script>
 </body>
 </html>
-
