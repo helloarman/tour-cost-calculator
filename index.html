@@ -11,6 +11,7 @@
     
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Create manifest file dynamically and link it
         const manifest = {
@@ -503,6 +504,31 @@
         .member-select-item:not(.selected) {
             opacity: 0.6;
             text-decoration: line-through;
+        }
+
+        /* --- Suggestion Chips (New) --- */
+        .suggestions-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+            min-height: 0; /* Prevent layout jumps */
+        }
+        .suggestion-chip {
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 4px 12px;
+            font-size: 12px;
+            color: var(--text-color-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .suggestion-chip:hover {
+            background-color: #fff9db; /* Light Yellow */
+            border-color: var(--primary-color);
+            color: var(--secondary-color);
         }
 
         /* --- History Styles --- */
@@ -1037,6 +1063,7 @@
                 <div class="form-group">
                     <label for="contribution-title">Title</label>
                     <input type="text" id="contribution-title" class="input-field" placeholder="e.g., Fuel, Groceries" required>
+                    <div id="title-suggestions-container" class="suggestions-list"></div>
                 </div>
                 <div class="form-group">
                     <label for="contribution-amount">Amount (৳)</label>
@@ -1206,6 +1233,7 @@
             const contributionMemberIdInput = document.getElementById('contribution-member-id');
             const contributionTitleInput = document.getElementById('contribution-title');
             const contributionAmountInput = document.getElementById('contribution-amount');
+            const titleSuggestionsContainer = document.getElementById('title-suggestions-container');
             
             // Contribution Details Modal Elements (Edit/Exceptions)
             const contributionDetailsModal = document.getElementById('contribution-details-modal');
@@ -1574,16 +1602,47 @@
                 }
             };
 
+            const renderTitleSuggestions = (filterText = '') => {
+                titleSuggestionsContainer.innerHTML = '';
+                const uniqueTitles = [...new Set(contributions.map(c => c.title))];
+                const lowerFilter = filterText.toLowerCase();
+                
+                uniqueTitles.sort().forEach(title => {
+                    if (title.toLowerCase().includes(lowerFilter)) {
+                        const chip = document.createElement('div');
+                        chip.className = 'suggestion-chip';
+                        chip.textContent = title;
+                        chip.addEventListener('click', () => {
+                            contributionTitleInput.value = title;
+                            // Optional: Clear suggestions or keep them?
+                            // Let's re-render to show full match logic or clear filter if desired.
+                            // For now, keeping the filter as is feels natural, or we can clear suggestions:
+                            // titleSuggestionsContainer.innerHTML = ''; 
+                        });
+                        titleSuggestionsContainer.appendChild(chip);
+                    }
+                });
+            };
+
             const openContributionModal = (memberId) => {
                 const member = members.find(m => m.id === memberId);
                 if (member) {
                     contributionModalTitle.textContent = `Add for ${member.name}`;
                     contributionMemberIdInput.value = memberId;
                     contributionForm.reset();
+                    
+                    // Populate Suggestions initially
+                    renderTitleSuggestions();
+
                     contributionModal.classList.add('active');
                     contributionTitleInput.focus();
                 }
             };
+
+            // Filter suggestions on input
+            contributionTitleInput.addEventListener('input', (e) => {
+                renderTitleSuggestions(e.target.value);
+            });
 
             const openContributionDetailsModal = (contributionId) => {
                 const contribution = contributions.find(c => c.id === contributionId);
@@ -2097,6 +2156,15 @@
                         </div>
                     </div>
 
+                    <div class="rep-charts-wrapper" style="display: flex; gap: 20px; margin-bottom: 30px;">
+                        <div style="flex: 1; height: 300px; position: relative;">
+                            <canvas id="rep-chart-pie"></canvas>
+                        </div>
+                        <div style="flex: 1; height: 300px; position: relative;">
+                            <canvas id="rep-chart-bar"></canvas>
+                        </div>
+                    </div>
+
                     <div class="rep-section-title">Member Balances</div>
                     <table class="rep-table">
                         <thead>
@@ -2116,24 +2184,102 @@
 
                 document.body.appendChild(reportContainer);
 
+                // --- Generate Charts ---
+                const ctxPie = document.getElementById('rep-chart-pie').getContext('2d');
+                const ctxBar = document.getElementById('rep-chart-bar').getContext('2d');
+
+                // Prepare Pie Chart Data (Group by Title)
+                const titleGroups = {};
+                contributions.forEach(c => {
+                    const cleanTitle = c.title.trim();
+                    const key = cleanTitle.toLowerCase(); // Case-insensitive grouping
+                    if (!titleGroups[key]) {
+                        titleGroups[key] = { label: cleanTitle, amount: 0 };
+                    }
+                    titleGroups[key].amount += c.amount;
+                });
+
+                // Update: Include amount in the label
+                const pieLabels = Object.values(titleGroups).map(g => `${g.label} (${formatCurrency(g.amount)})`);
+                const pieDataPoints = Object.values(titleGroups).map(g => g.amount);
+
+                // Prepare Bar Chart Data (Member Breakdown)
+                const memberNames = members.map(m => m.name);
+                // ... (Bar chart data logic remains based on members)
+                const memberEffectivePaid = members.map(m => {
+                    const totalPaid = contributions.filter(c => c.memberId === m.id).reduce((sum, c) => sum + c.amount, 0);
+                    const sent = transfers.filter(t => t.fromId === m.id).reduce((sum, t) => sum + t.amount, 0);
+                    const received = transfers.filter(t => t.toId === m.id).reduce((sum, t) => sum + t.amount, 0);
+                    return totalPaid + sent - received;
+                });
+                const memberShares = members.map(m => finalMemberCosts[m.id]);
+
+                // Create Charts with Animation Disabled for Capture
+                new Chart(ctxPie, {
+                    type: 'pie',
+                    data: {
+                        labels: pieLabels,
+                        datasets: [{
+                            data: pieDataPoints,
+                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#E7E9ED', '#71B37C'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        animation: false,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: { display: true, text: 'Expenses by Category' },
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+
+                new Chart(ctxBar, {
+                    type: 'bar',
+                    data: {
+                        labels: memberNames,
+                        datasets: [
+                            { label: 'Paid (Net)', data: memberEffectivePaid, backgroundColor: '#36A2EB' },
+                            { label: 'Fair Share', data: memberShares, backgroundColor: '#FF6384' }
+                        ]
+                    },
+                    options: {
+                        animation: false,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: { display: true, text: 'Paid vs Share' },
+                            legend: { position: 'bottom' }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+
                 // 3. Capture and Download
                 const originalText = downloadReportButton.innerHTML;
                 downloadReportButton.innerHTML = '<span>Saving...</span>';
                 
-                html2canvas(reportContainer, { scale: 2, backgroundColor: "#ffffff" }).then(canvas => {
-                    const link = document.createElement('a');
-                    const safeName = (tourName || 'Tour').replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                    link.download = `${safeName}-report-${new Date().toISOString().split('T')[0]}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                    document.body.removeChild(reportContainer);
-                    downloadReportButton.innerHTML = originalText;
-                }).catch(err => {
-                    console.error(err);
-                    if(document.body.contains(reportContainer)) document.body.removeChild(reportContainer);
-                    downloadReportButton.innerHTML = originalText;
-                    showConfirmModal("Failed to generate report image.", () => {}, true);
-                });
+                // Small delay to ensure charts render (even with animation: false)
+                setTimeout(() => {
+                    html2canvas(reportContainer, { scale: 2, backgroundColor: "#ffffff" }).then(canvas => {
+                        const link = document.createElement('a');
+                        const safeName = (tourName || 'Tour').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                        link.download = `${safeName}-report-${new Date().toISOString().split('T')[0]}.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                        document.body.removeChild(reportContainer);
+                        downloadReportButton.innerHTML = originalText;
+                    }).catch(err => {
+                        console.error(err);
+                        if(document.body.contains(reportContainer)) document.body.removeChild(reportContainer);
+                        downloadReportButton.innerHTML = originalText;
+                        showConfirmModal("Failed to generate report image.", () => {}, true);
+                    });
+                }, 100);
             };
 
             const copyReportToClipboard = () => {
