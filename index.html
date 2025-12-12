@@ -502,6 +502,100 @@
             text-decoration: line-through;
         }
 
+        /* --- History Styles --- */
+        .history-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-medium);
+        }
+        .history-item {
+            display: flex;
+            gap: var(--spacing-medium);
+            padding-bottom: var(--spacing-medium);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        .history-icon {
+            background: #f0f0f0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--text-color-secondary);
+        }
+        .history-icon.contribution {
+            background-color: #fff9db; /* Light Primary */
+            color: var(--accent-color);
+        }
+        .history-icon.transfer {
+            background-color: #e3f2fd; /* Light Blue */
+            color: #2196f3;
+        }
+        .history-icon.waiver {
+            background-color: #f3e5f5; /* Light Purple */
+            color: #9c27b0;
+        }
+        .history-content {
+            flex-grow: 1;
+        }
+        .history-title {
+            font-weight: var(--font-weight-bold);
+            font-size: var(--body-size);
+            color: var(--secondary-color);
+            margin-bottom: 2px;
+        }
+        .history-meta {
+            font-size: var(--caption-size);
+            color: var(--text-color-secondary);
+            margin-bottom: 4px;
+        }
+        .history-amount {
+            font-weight: var(--font-weight-bold);
+            color: var(--text-color-primary);
+        }
+        .history-details {
+            font-size: var(--caption-size);
+            color: var(--text-color-secondary);
+            font-style: italic;
+        }
+
+        /* --- Modal Tabs --- */
+        .modal-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-medium);
+            position: sticky;
+            top: 0;
+            background: var(--card-background);
+            z-index: 10;
+        }
+        .modal-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-color-secondary);
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .modal-tab:hover {
+            background-color: #fafafa;
+        }
+        .modal-tab.active {
+            color: var(--secondary-color);
+            border-bottom-color: var(--primary-color);
+            font-weight: var(--font-weight-bold);
+        }
+
         /* --- Mobile Responsiveness --- */
         @media (max-width: 768px) {
             body {
@@ -606,6 +700,10 @@
     <!-- Bottom Navbar -->
     <nav class="bottom-nav">
         <div class="nav-button-group">
+            <button id="history-button" class="cta-button button-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"></path><circle cx="12" cy="12" r="10"></circle></svg>
+                <span>History</span>
+            </button>
             <button id="download-report-button" class="cta-button button-secondary">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 <span>Report</span>
@@ -648,6 +746,32 @@
             <div class="settings-section">
                 <h3>All of your adjustments adjusted?</h3>
                  <button id="reset-button" class="cta-button button-danger" style="width: 100%;">Reset Journey</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="modal-overlay">
+        <div class="modal-content">
+            <header class="modal-header" style="margin-bottom: 0; padding-bottom: var(--spacing-small);">
+                <h2 class="modal-title">Activity History</h2>
+                <button class="icon-button close-modal-btn">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </header>
+            
+            <div class="modal-tabs">
+                <div class="modal-tab active" data-tab="all">All</div>
+                <div class="modal-tab" data-tab="contribution">Contributions</div>
+                <div class="modal-tab" data-tab="transfer">Transfers</div>
+                <div class="modal-tab" data-tab="waiver">Waivers</div>
+            </div>
+
+            <div id="history-container">
+                <ul id="history-list" class="history-list">
+                    <!-- History items injected here -->
+                </ul>
+                <p id="no-history-msg" class="empty-contributions" style="display:none;">No activity recorded yet.</p>
             </div>
         </div>
     </div>
@@ -734,6 +858,13 @@
                     <label for="edit-member-waiver">Personal Waiver (৳)</label>
                     <input type="number" id="edit-member-waiver" class="input-field" placeholder="0.00" step="0.01" min="0" required>
                 </div>
+                <div class="form-group">
+                    <label>Distribute Waiver Among:</label>
+                    <div style="font-size: 11px; color: var(--text-color-secondary); margin-bottom: 4px;">If none selected, splits among all others.</div>
+                    <div id="waiver-distribute-list" class="member-select-list">
+                        <!-- Chips will be injected here -->
+                    </div>
+                </div>
                 <div class="modal-actions">
                     <button type="button" class="cta-button button-secondary cancel-modal-btn">Cancel</button>
                     <button type="submit" class="cta-button">Save Changes</button>
@@ -798,6 +929,7 @@
             const equalShareEl = document.getElementById('equal-share');
             const totalWaiversEl = document.getElementById('total-waivers');
             const transferButton = document.getElementById('transfer-button');
+            const historyButton = document.getElementById('history-button');
             const downloadReportButton = document.getElementById('download-report-button');
             const copyReportButton = document.getElementById('copy-report-button');
             const settingsButton = document.getElementById('settings-button');
@@ -808,6 +940,12 @@
             const backupButton = document.getElementById('backup-button');
             const uploadInput = document.getElementById('upload-input');
             const resetButton = document.getElementById('reset-button');
+
+            // History Modal Elements
+            const historyModal = document.getElementById('history-modal');
+            const historyList = document.getElementById('history-list');
+            const noHistoryMsg = document.getElementById('no-history-msg');
+            const historyTabs = document.querySelectorAll('.modal-tab');
 
             // Contribution Modal Elements (Add)
             const contributionModal = document.getElementById('contribution-modal');
@@ -832,6 +970,7 @@
             const editMemberIdInput = document.getElementById('edit-member-id');
             const editMemberNameInput = document.getElementById('edit-member-name');
             const editMemberWaiverInput = document.getElementById('edit-member-waiver');
+            const waiverDistributeList = document.getElementById('waiver-distribute-list');
 
             // Transfer Modal Elements
             const transferModal = document.getElementById('transfer-modal');
@@ -906,6 +1045,7 @@
                     members = membersCookie ? JSON.parse(membersCookie) : [];
                     members.forEach(m => {
                         if (m.waiver === undefined) m.waiver = 0;
+                        if (!m.waiverDistributeIds) m.waiverDistributeIds = [];
                     });
 
                     contributions = contributionsCookie ? JSON.parse(contributionsCookie) : [];
@@ -938,10 +1078,9 @@
                 tourNameInput.value = tourName;
 
                 // --- Core Calculation Logic ---
-                // We need to calculate how much each member "should" pay based on all contributions
-                // considering exclusions.
-                const memberSharedCosts = {};
-                members.forEach(m => memberSharedCosts[m.id] = 0);
+                // 1. Base Shares from Contributions
+                const finalMemberCosts = {};
+                members.forEach(m => finalMemberCosts[m.id] = 0);
 
                 contributions.forEach(c => {
                     const excluded = c.excludedMembers || [];
@@ -951,16 +1090,40 @@
                         const sharePerPerson = c.amount / includedCount;
                         members.forEach(m => {
                             if (!excluded.includes(m.id)) {
-                                memberSharedCosts[m.id] += sharePerPerson;
+                                finalMemberCosts[m.id] += sharePerPerson;
                             }
                         });
                     }
                 });
 
+                // 2. Apply Waivers (Shift costs)
+                members.forEach(m => {
+                    const waiver = m.waiver || 0;
+                    if (waiver > 0) {
+                        // Subtract waiver from the beneficiary
+                        finalMemberCosts[m.id] -= waiver;
+
+                        // Distribute cost to others
+                        const distributeIds = m.waiverDistributeIds || [];
+                        // Filter targets: must exist and not be self
+                        let targets = members.filter(mem => mem.id !== m.id && distributeIds.includes(mem.id));
+                        
+                        // Default to "All Others" if no specific targets selected
+                        if (targets.length === 0) {
+                            targets = members.filter(mem => mem.id !== m.id);
+                        }
+
+                        if (targets.length > 0) {
+                            const share = waiver / targets.length;
+                            targets.forEach(target => {
+                                finalMemberCosts[target.id] += share;
+                            });
+                        }
+                    }
+                });
+
                 const totalContribution = contributions.reduce((sum, c) => sum + c.amount, 0);
                 const totalWaivers = members.reduce((sum, m) => sum + (m.waiver || 0), 0);
-                
-                // Average share is now just an indicator, not the exact calculation base
                 const averageShare = members.length > 0 ? totalContribution / members.length : 0;
                 
                 // Render Members
@@ -980,10 +1143,10 @@
 
                         const effectiveTotalPaid = memberTotalContributions + totalSent - totalReceived;
                         
-                        // Final Share = Calculated Shared Cost - Waiver
-                        const finalPersonalShare = (memberSharedCosts[member.id] || 0) - (member.waiver || 0);
+                        // Final Share is now fully calculated in finalMemberCosts
+                        const finalPersonalShare = finalMemberCosts[member.id];
                         
-                        // Balance = What they paid - What they should pay
+                        // Balance
                         const balance = effectiveTotalPaid - finalPersonalShare;
 
                         const memberCard = document.createElement('div');
@@ -1104,7 +1267,8 @@
                     const newMember = {
                         id: Date.now(),
                         name: name,
-                        waiver: 0
+                        waiver: 0,
+                        waiverDistributeIds: []
                     };
                     members.push(newMember);
                     memberNameInput.value = '';
@@ -1256,6 +1420,26 @@
                     editMemberIdInput.value = member.id;
                     editMemberNameInput.value = member.name;
                     editMemberWaiverInput.value = (member.waiver || 0).toFixed(2);
+                    
+                    // Populate Waiver Distribute List
+                    waiverDistributeList.innerHTML = '';
+                    const distributeIds = member.waiverDistributeIds || [];
+                    
+                    // Create chips for all OTHER members
+                    members.filter(m => m.id !== member.id).forEach(otherMember => {
+                        const isSelected = distributeIds.includes(otherMember.id);
+                        const chip = document.createElement('div');
+                        chip.className = `member-select-item ${isSelected ? 'selected' : ''}`;
+                        chip.textContent = otherMember.name;
+                        chip.dataset.memberId = otherMember.id;
+                        
+                        chip.addEventListener('click', () => {
+                            chip.classList.toggle('selected');
+                        });
+                        
+                        waiverDistributeList.appendChild(chip);
+                    });
+
                     editMemberModal.classList.add('active');
                 }
             };
@@ -1266,10 +1450,20 @@
                 const newName = editMemberNameInput.value.trim();
                 const newWaiver = parseFloat(editMemberWaiverInput.value);
                 
+                // Gather distribution IDs
+                const newDistributeIds = [];
+                const chips = waiverDistributeList.querySelectorAll('.member-select-item');
+                chips.forEach(chip => {
+                    if (chip.classList.contains('selected')) {
+                        newDistributeIds.push(parseInt(chip.dataset.memberId));
+                    }
+                });
+
                 const member = members.find(m => m.id === memberId);
                 if (member && newName && newWaiver >= 0) {
                     member.name = newName;
                     member.waiver = newWaiver;
+                    member.waiverDistributeIds = newDistributeIds;
                     closeAllModals();
                     saveAndRender();
                 }
@@ -1305,6 +1499,156 @@
             };
 
             const openSettingsModal = () => settingsModal.classList.add('active');
+            
+            // --- History Logic ---
+            let currentHistoryTab = 'all';
+
+            const renderHistory = () => {
+                historyList.innerHTML = '';
+                
+                // 1. Contributions & Transfers (Time-based)
+                const timeBasedActivity = [
+                    ...contributions.map(c => ({ ...c, type: 'contribution', timestamp: c.id })),
+                    ...transfers.map(t => ({ ...t, type: 'transfer', timestamp: t.id }))
+                ];
+
+                // 2. Waivers (State-based, always "current")
+                const waiverActivity = [];
+                members.forEach(m => {
+                    if ((m.waiver || 0) > 0) {
+                        waiverActivity.push({
+                            type: 'waiver',
+                            memberId: m.id,
+                            amount: m.waiver,
+                            distributeIds: m.waiverDistributeIds || [],
+                            timestamp: Date.now() // Treat as "Now" for sorting if needed, or keep separate
+                        });
+                    }
+                });
+
+                // Filter based on Tab
+                let itemsToShow = [];
+                if (currentHistoryTab === 'all') {
+                    // Show time-based sorted by date desc
+                    itemsToShow = timeBasedActivity.sort((a, b) => b.timestamp - a.timestamp);
+                    // Append waivers at the top as "Active Status"
+                    // Or merge them? Let's put them at the top as they are "Current State"
+                    // Actually, let's strictly follow types. If 'all', show everything.
+                    // But waivers don't have a real date. Let's filter strict.
+                    // To keep it clean: All = Contribs + Transfers. Waivers are in their own tab or special section.
+                    // However, user might expect everything. Let's merge active waivers at the top.
+                    itemsToShow = [...waiverActivity, ...itemsToShow];
+                } else if (currentHistoryTab === 'waiver') {
+                    itemsToShow = waiverActivity;
+                } else {
+                    itemsToShow = timeBasedActivity.filter(i => i.type === currentHistoryTab).sort((a, b) => b.timestamp - a.timestamp);
+                }
+
+                if (itemsToShow.length === 0) {
+                    noHistoryMsg.style.display = 'block';
+                    noHistoryMsg.textContent = currentHistoryTab === 'waiver' ? "No active personal waivers." : "No activity recorded yet.";
+                } else {
+                    noHistoryMsg.style.display = 'none';
+                    
+                    itemsToShow.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'history-item';
+                        
+                        let iconHtml = '';
+                        let contentHtml = '';
+
+                        if (item.type === 'contribution') {
+                            const date = new Date(item.timestamp);
+                            const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const member = members.find(m => m.id === item.memberId);
+                            const memberName = member ? member.name : 'Unknown';
+                            
+                            const excluded = item.excludedMembers || [];
+                            let splitText = '';
+                            if (excluded.length > 0) {
+                                const excludedNames = excluded.map(id => {
+                                    const m = members.find(mem => mem.id === id);
+                                    return m ? m.name : 'Unknown';
+                                }).join(', ');
+                                splitText = ` (Excluding: ${excludedNames})`;
+                            }
+
+                            iconHtml = `
+                                <div class="history-icon contribution">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                </div>
+                            `;
+                            contentHtml = `
+                                <div class="history-title">${item.title}</div>
+                                <div class="history-meta">${dateStr} • by ${memberName}</div>
+                                <div class="history-amount">${formatCurrency(item.amount)}</div>
+                                ${splitText ? `<div class="history-details">${splitText}</div>` : ''}
+                            `;
+                        } else if (item.type === 'transfer') {
+                            const date = new Date(item.timestamp);
+                            const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const fromMember = members.find(m => m.id === item.fromId);
+                            const toMember = members.find(m => m.id === item.toId);
+                            const fromName = fromMember ? fromMember.name : 'Unknown';
+                            const toName = toMember ? toMember.name : 'Unknown';
+
+                            iconHtml = `
+                                <div class="history-icon transfer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                                </div>
+                            `;
+                            contentHtml = `
+                                <div class="history-title">Money Transfer</div>
+                                <div class="history-meta">${dateStr}</div>
+                                <div class="history-details">${fromName} ➔ ${toName}</div>
+                                <div class="history-amount">${formatCurrency(item.amount)}</div>
+                            `;
+                        } else if (item.type === 'waiver') {
+                            const member = members.find(m => m.id === item.memberId);
+                            const memberName = member ? member.name : 'Unknown';
+                            
+                            // Determine distribution
+                            const distributeIds = item.distributeIds || [];
+                            const targets = members.filter(mem => mem.id !== item.memberId && distributeIds.includes(mem.id));
+                            const targetNames = targets.length > 0 ? targets.map(t => t.name).join(', ') : 'All Others';
+
+                            iconHtml = `
+                                <div class="history-icon waiver">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 9V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><line x1="9" y1="9" x2="9" y2="9.01"></line><path d="M9 19h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2z"></path></svg>
+                                </div>
+                            `;
+                            contentHtml = `
+                                <div class="history-title">Active Personal Waiver</div>
+                                <div class="history-meta">Beneficiary: ${memberName}</div>
+                                <div class="history-details">Cost covered by: ${targetNames}</div>
+                                <div class="history-amount">${formatCurrency(item.amount)}</div>
+                            `;
+                        }
+
+                        li.innerHTML = iconHtml + '<div class="history-content">' + contentHtml + '</div>';
+                        historyList.appendChild(li);
+                    });
+                }
+            };
+
+            const openHistoryModal = () => {
+                currentHistoryTab = 'all'; // Reset to all on open
+                historyTabs.forEach(t => t.classList.remove('active'));
+                historyTabs[0].classList.add('active'); // Set visual active
+                renderHistory();
+                historyModal.classList.add('active');
+            };
+
+            // Tab Click Handler
+            historyTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    historyTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentHistoryTab = tab.dataset.tab;
+                    renderHistory();
+                });
+            });
+
             const closeAllModals = () => allModals.forEach(modal => modal.classList.remove('active'));
             
             const resetApp = () => {
@@ -1346,17 +1690,33 @@
                 }
                 let content = `Tour Contribution Report: ${tourName}\nGenerated on: ${new Date().toLocaleString()}\n========================================\n\n`;
                 
-                // Recalculate Logic for Report
-                const memberSharedCosts = {};
-                members.forEach(m => memberSharedCosts[m.id] = 0);
+                // 1. Calculate Costs (Replicated Logic)
+                const finalMemberCosts = {};
+                members.forEach(m => finalMemberCosts[m.id] = 0);
+
                 contributions.forEach(c => {
                     const excluded = c.excludedMembers || [];
                     const includedCount = members.length - excluded.length;
                     if (includedCount > 0) {
                         const share = c.amount / includedCount;
                         members.forEach(m => {
-                            if (!excluded.includes(m.id)) memberSharedCosts[m.id] += share;
+                            if (!excluded.includes(m.id)) finalMemberCosts[m.id] += share;
                         });
+                    }
+                });
+
+                // 2. Apply Waivers
+                members.forEach(m => {
+                    const waiver = m.waiver || 0;
+                    if (waiver > 0) {
+                        finalMemberCosts[m.id] -= waiver;
+                        const distributeIds = m.waiverDistributeIds || [];
+                        let targets = members.filter(mem => mem.id !== m.id && distributeIds.includes(mem.id));
+                        if (targets.length === 0) targets = members.filter(mem => mem.id !== m.id);
+                        if (targets.length > 0) {
+                            const share = waiver / targets.length;
+                            targets.forEach(target => finalMemberCosts[target.id] += share);
+                        }
                     }
                 });
 
@@ -1374,7 +1734,7 @@
                     const totalSent = transfers.filter(t => t.fromId === member.id).reduce((sum, t) => sum + t.amount, 0);
                     const totalReceived = transfers.filter(t => t.toId === member.id).reduce((sum, t) => sum + t.amount, 0);
                     const effectiveTotalPaid = memberTotalContributions + totalSent - totalReceived;
-                    const finalPersonalShare = (memberSharedCosts[member.id] || 0) - (member.waiver || 0);
+                    const finalPersonalShare = finalMemberCosts[member.id];
                     const balance = effectiveTotalPaid - finalPersonalShare;
 
                     content += `\nMember: ${member.name}\n`;
@@ -1382,6 +1742,15 @@
                     content += `  - Amount Sent: ${formatCurrency(totalSent)}\n`;
                     content += `  - Amount Received: ${formatCurrency(totalReceived)}\n`;
                     content += `  - Personal Waiver: ${formatCurrency(member.waiver || 0)}\n`;
+                    
+                    // Add Waiver distribution details to report
+                    if ((member.waiver || 0) > 0) {
+                        const distributeIds = member.waiverDistributeIds || [];
+                        const targets = members.filter(mem => mem.id !== member.id && distributeIds.includes(mem.id));
+                        const targetNames = targets.length > 0 ? targets.map(t => t.name).join(', ') : 'All Others';
+                        content += `    (Distributed among: ${targetNames})\n`;
+                    }
+
                     content += `  - Final Personal Share: ${formatCurrency(finalPersonalShare)}\n`;
                     
                     if (Math.abs(balance) < 0.01) {
@@ -1490,6 +1859,7 @@
             // --- Event Listeners ---
             addMemberForm.addEventListener('submit', addMember);
             transferButton.addEventListener('click', openTransferModal);
+            historyButton.addEventListener('click', openHistoryModal); // New Listener
             downloadReportButton.addEventListener('click', downloadReport);
             copyReportButton.addEventListener('click', copyReportToClipboard);
             settingsButton.addEventListener('click', openSettingsModal);
