@@ -841,19 +841,27 @@
                 flex-direction: column;
                 align-items: stretch; /* Make children full-width */
                 max-width: 100%;
-                padding: 0 var(--spacing-medium);
+                padding: 0; /* Remove side padding inside container, body handles it */
+                gap: var(--spacing-medium); /* Increase gap for touch targets */
             }
             
             .add-member-form {
+                width: 100%;
+                max-width: none; /* Allow full width on mobile */
+            }
+
+            /* Ensure transfer button matches form width */
+            #transfer-button {
                 width: 100%;
             }
 
             .summary-section {
                 flex-direction: column;
-                padding: 0 var(--spacing-medium);
+                padding: 0; /* Remove specific padding, follow grid gap */
             }
             .summary-card {
                 max-width: 100%;
+                width: 100%; /* Ensure full width */
             }
         }
         @media (max-width: 540px) {
@@ -885,6 +893,43 @@
                 padding: var(--spacing-medium);
             }
 
+            /* Support button mobile optimization - Only Icon */
+            .support-btn-text {
+                display: none;
+            }
+            .support-button {
+                padding: 6px;
+                width: 46px;
+                height: 46px;
+                border-radius: 50%;
+                justify-content: center;
+                gap: 0;
+            }
+
+            /* Bottom Nav Mobile Optimization - Icons Only */
+            .bottom-nav {
+                width: 90%;
+                max-width: 400px;
+                padding: 10px;
+            }
+            
+            .bottom-nav .nav-button-group {
+                justify-content: space-around;
+                width: 100%;
+            }
+
+            .bottom-nav .cta-button span {
+                display: none;
+            }
+
+            .bottom-nav .cta-button {
+                padding: 0;
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                justify-content: center;
+                gap: 0;
+            }
         }
     </style>
 </head>
